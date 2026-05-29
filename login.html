@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html style="font-size: 16px;" lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <meta name="keywords" content="Client Login, Arshana Shyamkishore, Legal Portal">
+  <meta name="description" content="">
+  <title>Client Login – Arshana Shyamkishore &amp; Associates</title>
+  <link rel="stylesheet" href="nicepage.css" media="screen">
+  <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+  <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+  <meta name="generator" content="Nicepage 8.0.6, nicepage.com">
+  <link id="u-page-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css2?display=swap&family=Roboto:ital,wght@0,100;0,300;0,400;0,700&family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700&family=Montserrat:ital,wght@0,100;0,300;0,400;0,500;0,600;0,700;0,800;0,900&family=Oswald:wght@200;300;400;500;600;700">
+  <meta name="theme-color" content="#478ac9">
+  <meta property="og:title" content="Client Login">
+  <meta property="og:type" content="website">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { max-width: 100% !important; overflow-x: hidden !important; }
+
+    /* ── TOP NAV ── */
+    .login-topnav {
+      background: #111111;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; height: 68px;
+      position: sticky; top: 0; z-index: 999;
+    }
+    .login-topnav .ptn-brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+    .login-topnav .ptn-brand img { height: 50px; object-fit: contain; }
+    .login-topnav .ptn-brand span {
+      font-family: Montserrat, sans-serif; font-size: 1rem;
+      font-weight: 700; color: #fff; letter-spacing: 0.3px;
+    }
+    .login-topnav .back-link {
+      font-family: Montserrat, sans-serif; font-size: 0.8rem; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.5);
+      text-decoration: none; display: flex; align-items: center; gap: 7px; transition: color .2s;
+    }
+    .login-topnav .back-link:hover { color: #adcce9; }
+
+    /* ── HERO ── */
+    .login-hero {
+      background-image: linear-gradient(0deg, rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+        url('images/photo-1505664063603-28e48ca204eb.jpeg');
+      background-position: 50% 50%; background-size: cover;
+      min-height: 240px;
+      display: flex; align-items: center; justify-content: center; flex-direction: column;
+      text-align: center; padding: 48px 24px;
+    }
+    .login-hero h5 {
+      font-family: Montserrat, sans-serif; font-size: 0.9rem; letter-spacing: 4px;
+      text-transform: uppercase; color: #adcce9; margin-bottom: 12px; font-weight: 600;
+    }
+    .login-hero h1 {
+      font-family: Montserrat, sans-serif; font-size: 2.8rem; font-weight: 800; color: #fff;
+    }
+
+    /* ── FORM SECTION ── */
+    .login-section {
+      background: #f2f2f2;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 52px 24px 0;
+    }
+    .login-card {
+      background: #ffffff;
+      border-top: 4px solid #478ac9;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.1);
+      width: 100%; max-width: 520px;
+      padding: 44px 44px 40px;
+    }
+    .lc-icon {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: #adcce9; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .lc-icon svg { color: #478ac9; }
+    .login-card h2 {
+      text-align: center; font-family: Montserrat, sans-serif;
+      font-size: 1.9rem; font-weight: 800; color: #111; margin-bottom: 8px;
+    }
+    .login-card .sub {
+      text-align: center; font-family: Montserrat, sans-serif;
+      font-size: 0.95rem; color: #777; margin-bottom: 32px; line-height: 1.7;
+    }
+    .error-bar {
+      background: #fdf0ef; border-left: 4px solid #c0392b;
+      border: 1px solid rgba(192,57,43,0.25); border-left: 4px solid #c0392b;
+      color: #c0392b; padding: 13px 16px;
+      font-family: Montserrat, sans-serif; font-size: 0.9rem;
+      margin-bottom: 20px; display: none; line-height: 1.5; border-radius: 4px;
+    }
+    .lc-fg { margin-bottom: 22px; }
+    .lc-fg label {
+      display: block; font-family: Montserrat, sans-serif;
+      font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+      color: #478ac9; font-weight: 700; margin-bottom: 10px;
+    }
+    /* password field wrapper for show/hide toggle */
+    .pw-wrap { position: relative; }
+    .pw-wrap input { padding-right: 50px !important; }
+    .pw-toggle {
+      position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; color: #aaa;
+      padding: 4px; display: flex; align-items: center; transition: color .2s;
+    }
+    .pw-toggle:hover { color: #478ac9; }
+    .lc-fg input {
+      width: 100%;
+      border: 1px solid #d0d0d0; border-radius: 30px;
+      background: #f2f2f2; color: #111;
+      padding: 14px 20px;
+      font-family: Montserrat, sans-serif; font-size: 1rem;
+      outline: none; transition: border-color .2s, box-shadow .2s;
+    }
+    .lc-fg input:focus {
+      border-color: #478ac9; box-shadow: 0 0 0 3px rgba(71,138,201,0.12); background: #fff;
+    }
+    .lc-fg input::placeholder { color: #bbb; }
+
+    /* forgot password link */
+    .forgot-link {
+      display: block; text-align: right; margin-top: 8px;
+      font-family: Montserrat, sans-serif; font-size: 0.8rem;
+      color: #478ac9; text-decoration: none; font-weight: 500;
+      transition: color .2s;
+    }
+    .forgot-link:hover { color: #2d6a9f; }
+
+    .btn-login {
+      width: 100%; background: #478ac9; color: #fff; border: none;
+      border-radius: 30px; padding: 16px;
+      font-family: Montserrat, sans-serif; font-size: 0.9rem;
+      font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      cursor: pointer; transition: background .2s; margin-top: 10px;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .btn-login:hover { background: #5d9ad2; }
+    .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .login-note {
+      text-align: center; font-family: Montserrat, sans-serif;
+      font-size: 0.85rem; color: #aaa; margin-top: 24px; line-height: 1.8;
+    }
+    .login-note a { color: #478ac9; text-decoration: none; }
+
+    /* ── FORGOT PASSWORD MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+      display: none; align-items: center; justify-content: center; z-index: 500; padding: 24px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #fff; width: 100%; max-width: 480px;
+      border-top: 4px solid #478ac9;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.18); padding: 40px 40px 36px;
+    }
+    .modal-box h3 {
+      font-family: Montserrat, sans-serif; font-size: 1.4rem;
+      font-weight: 800; color: #111; margin-bottom: 12px;
+    }
+    .modal-box p {
+      font-family: Montserrat, sans-serif; font-size: 0.9rem;
+      color: #555; line-height: 1.8; margin-bottom: 24px;
+    }
+    .modal-box p a { color: #478ac9; font-weight: 700; text-decoration: none; }
+    .modal-box p strong { color: #111; }
+    .modal-close {
+      width: 100%; background: #478ac9; color: #fff; border: none;
+      border-radius: 30px; padding: 14px;
+      font-family: Montserrat, sans-serif; font-size: 0.85rem;
+      font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      cursor: pointer; transition: background .2s;
+    }
+    .modal-close:hover { background: #5d9ad2; }
+
+    /* ── SECURITY FOOTER ── */
+    .security-bar {
+      background: #f2f2f2; padding: 36px 24px 0;
+      display: flex; justify-content: center;
+    }
+    .security-inner {
+      width: 100%; max-width: 520px;
+      border-top: 1px solid #dde6f0; padding-top: 24px;
+    }
+    .security-title {
+      font-family: Montserrat, sans-serif; font-size: 0.65rem;
+      letter-spacing: 2.5px; text-transform: uppercase; color: #aaa;
+      font-weight: 600; text-align: center; margin-bottom: 18px;
+    }
+    .security-badges {
+      display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;
+    }
+    .sec-badge {
+      display: flex; align-items: center; gap: 8px;
+      font-family: Montserrat, sans-serif; font-size: 0.78rem;
+      color: #666; font-weight: 500;
+    }
+    .sec-badge svg { color: #478ac9; flex-shrink: 0; }
+
+    /* ── KTECH FOOTER ── */
+    .ktech-footer {
+      background: #f2f2f2; padding: 32px 24px 40px;
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+    }
+    .ktech-divider {
+      width: 100%; max-width: 520px; height: 1px;
+      background: linear-gradient(90deg, transparent, #dde6f0, transparent);
+      margin-bottom: 8px;
+    }
+    .ktech-brand {
+      display: flex; align-items: center; gap: 14px;
+    }
+    .ktech-brand img {
+      height: 52px; object-fit: contain;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
+    }
+    .ktech-brand-text {
+      font-family: Montserrat, sans-serif;
+    }
+    .ktech-brand-text .kt-name {
+      font-size: 0.85rem; font-weight: 800; color: #111; letter-spacing: 1px;
+    }
+    .ktech-brand-text .kt-sub {
+      font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: #aaa; margin-top: 2px;
+    }
+    .ktech-gif { max-width: 200px; opacity: 0.85; }
+    .ktech-tagline {
+      font-family: Montserrat, sans-serif; font-size: 0.72rem;
+      color: #aaa; text-align: center; line-height: 1.6; max-width: 400px;
+    }
+
+    /* ── SITE FOOTER ── */
+    .np-footer-copyright { background: #111111; }
+    .np-footer-copyright .u-sheet { padding: 24px; text-align: center; }
+    .np-footer-copyright p {
+      font-family: Montserrat, sans-serif; font-size: 0.8rem; color: rgba(255,255,255,0.35);
+    }
+  </style>
+</head>
+<body data-path-to-root="./" data-include-products="false" class="u-body u-xl-mode" data-lang="en">
+
+<!-- TOP NAV -->
+<nav class="login-topnav">
+  <a href="index.html" class="ptn-brand">
+    <img src="images/1663533747_151635_fs-removebg-preview.png" alt="Arshana Shyamkishore &amp; Associates">
+    <span>Arshana Shyamkishore &amp; Associates</span>
+  </a>
+  <a href="index.html" class="back-link">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Back to Home
+  </a>
+</nav>
+
+<!-- HERO -->
+<div class="login-hero">
+  <h5>Secure Client Access</h5>
+  <h1>Client Portal</h1>
+</div>
+
+<!-- LOGIN FORM -->
+<section class="login-section">
+  <div class="login-card">
+    <div class="lc-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+    </div>
+    <h2>Sign In</h2>
+    <p class="sub">Enter the credentials provided by our office to access your confidential legal documents.</p>
+
+    <div class="error-bar" id="errorMsg">Invalid email or password. Please contact our office for assistance.</div>
+
+    <div class="lc-fg">
+      <label for="loginEmail">Email Address</label>
+      <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email">
+    </div>
+
+    <div class="lc-fg">
+      <label for="loginPass">Password</label>
+      <div class="pw-wrap">
+        <input type="password" id="loginPass" placeholder="Your assigned password" autocomplete="current-password">
+        <button class="pw-toggle" type="button" onclick="togglePw('loginPass', this)" aria-label="Show password">
+          <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <a href="#" class="forgot-link" onclick="openForgot(); return false;">Forgot password?</a>
+    </div>
+
+    <button class="btn-login" id="loginBtn" onclick="doLogin()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      Access My Documents
+    </button>
+
+    <p class="login-note">
+      Login credentials are assigned by our office.<br>
+      Need help? Call <a href="tel:0314644940">031 464 4940</a> or email <a href="mailto:arshanasnlaw@gmail.com">arshanasnlaw@gmail.com</a>
+    </p>
+  </div>
+</section>
+
+<!-- SECURITY BADGES -->
+<div class="security-bar">
+  <div class="security-inner">
+    <div class="security-title">Secured &amp; Protected By</div>
+    <div class="security-badges">
+      <div class="sec-badge">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        256-bit SSL Encryption
+      </div>
+      <div class="sec-badge">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        Password Protected Access
+      </div>
+      <div class="sec-badge">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+        Session Timeout Security
+      </div>
+      <div class="sec-badge">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+        Confidential Document Vault
+      </div>
+      <div class="sec-badge">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9,12 11,14 15,10"/></svg>
+        Google Drive Secure Storage
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- KTECH FOOTER BRANDING -->
+<div class="ktech-footer">
+  <div class="ktech-divider"></div>
+  <div class="ktech-brand">
+    <img src="ktech-logo.jpeg" alt="KTech ICT">
+    <div class="ktech-brand-text">
+      <div class="kt-name">KTech ICT</div>
+      <div class="kt-sub">Web Design &amp; Development</div>
+    </div>
+  </div>
+  <img src="Untitled_video_-_Made_with_Clipchamp.gif" alt="HTML King Protect" class="ktech-gif">
+  <img src="Designer__3_.png" alt="KT Tech ICT" style="max-width:120px;opacity:0.9;">
+  <p class="ktech-tagline">
+    Designed, Engineered &amp; Secured by <strong style="color:#111;">KTech ICT</strong> · HTML King Protect Ver 10.9<br>
+    Enterprise-grade web solutions for legal professionals
+  </p>
+</div>
+
+<!-- SITE FOOTER -->
+<section class="u-black u-clearfix np-footer-copyright">
+  <div class="u-clearfix u-sheet">
+    <p>©Copyright 2026-2027 · Arshana Shyamkishore &amp; Associates · All Rights Reserved</p>
+  </div>
+</section>
+
+<!-- FORGOT PASSWORD MODAL -->
+<div class="modal-overlay" id="forgotModal">
+  <div class="modal-box">
+    <h3>Reset Your Password</h3>
+    <p>
+      For security, passwords are assigned and managed directly by our office.<br><br>
+      To request new login credentials, please contact us:<br><br>
+      <strong>Email:</strong> <a href="mailto:arshanasnlaw@gmail.com?subject=Password Reset Request">arshanasnlaw@gmail.com</a><br>
+      <strong>Phone:</strong> <a href="tel:0314644940">031 464 4940</a><br><br>
+      Please include your full name and the email address linked to your account. Our office will respond within 1 business day.
+    </p>
+    <button class="modal-close" onclick="closeForgot()">Close</button>
+  </div>
+</div>
+
+<script>
+  function getClients() {
+    try { return JSON.parse(localStorage.getItem('asa_clients') || '{}'); } catch(e) { return {}; }
+  }
+
+  function togglePw(id, btn) {
+    const inp = document.getElementById(id);
+    if (inp.type === 'password') {
+      inp.type = 'text';
+      btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+    } else {
+      inp.type = 'password';
+      btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+    }
+  }
+
+  function openForgot()  { document.getElementById('forgotModal').classList.add('open'); }
+  function closeForgot() { document.getElementById('forgotModal').classList.remove('open'); }
+  document.getElementById('forgotModal').addEventListener('click', function(e) {
+    if (e.target === this) closeForgot();
+  });
+
+  function doLogin() {
+    const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+    const pass  = document.getElementById('loginPass').value;
+    const err   = document.getElementById('errorMsg');
+    const btn   = document.getElementById('loginBtn');
+    err.style.display = 'none';
+    if (!email || !pass) {
+      err.textContent = 'Please enter both your email address and password.';
+      err.style.display = 'block'; return;
+    }
+    btn.disabled = true;
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>&nbsp;Verifying…';
+    setTimeout(() => {
+      const c = getClients();
+      if (c[email] && c[email].password === pass) {
+        sessionStorage.setItem('asa_client_email', email);
+        sessionStorage.setItem('asa_client_name', c[email].name || email);
+        window.location.href = 'portal.html';
+      } else {
+        err.textContent = 'Invalid email or password. Please contact our office for assistance.';
+        err.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Access My Documents';
+      }
+    }, 700);
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+</script>
+</body>
+</html>

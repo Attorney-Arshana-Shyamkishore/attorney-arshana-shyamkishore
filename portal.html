@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html style="font-size: 16px;" lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <title>My Documents – Arshana Shyamkishore &amp; Associates</title>
+  <link rel="stylesheet" href="nicepage.css" media="screen">
+  <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+  <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+  <meta name="generator" content="Nicepage 8.0.6, nicepage.com">
+  <link id="u-page-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css2?display=swap&family=Roboto:ital,wght@0,100;0,300;0,400;0,700&family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700&family=Montserrat:ital,wght@0,100;0,300;0,400;0,500;0,600;0,700;0,800;0,900&family=Oswald:wght@200;300;400;500;600;700">
+  <meta name="theme-color" content="#478ac9">
+  <meta property="og:title" content="My Documents">
+  <meta property="og:type" content="website">
+  <style>
+    /* Portal page — mirrors Nicepage site palette and class patterns */
+    .portal-topnav {
+      background: #111111;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 68px; position: sticky; top: 0; z-index: 999;
+    }
+    .portal-topnav .ptn-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .portal-topnav .ptn-brand img { height: 52px; object-fit: contain; }
+    .portal-topnav .ptn-brand span { font-family: Montserrat, sans-serif; font-size: 0.97rem; font-weight: 600; color: #fff; }
+    .portal-topnav .ptn-right { display: flex; align-items: center; gap: 12px; }
+    .client-badge {
+      font-family: Montserrat, sans-serif; font-size: 0.88rem; font-weight: 600;
+      color: #adcce9; background: rgba(71,138,201,0.15);
+      border: 1px solid rgba(71,138,201,0.3); border-radius: 30px;
+      padding: 6px 14px; display: flex; align-items: center; gap: 7px;
+    }
+    .btn-signout {
+      font-family: Montserrat, sans-serif; font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      background: transparent; border: 1px solid rgba(255,255,255,0.2); border-radius: 30px;
+      color: rgba(255,255,255,0.4); padding: 7px 16px; cursor: pointer; transition: all .2s;
+    }
+    .btn-signout:hover { border-color: #adcce9; color: #adcce9; }
+
+    /* Hero — same image shading pattern as index */
+    .portal-hero {
+      background-image: linear-gradient(0deg, rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('images/pexels-ekaterina-bolovtsova-6077447.jpg');
+      background-position: 50% 50%; background-size: cover;
+      min-height: 180px; display: flex; align-items: center; justify-content: flex-start;
+      padding: 40px 60px; border-bottom: 4px solid #478ac9;
+    }
+    .portal-hero-text h5 {
+      font-family: Montserrat, sans-serif; font-size: 0.88rem; letter-spacing: 3px;
+      text-transform: uppercase; color: #adcce9; font-weight: 600; margin-bottom: 8px;
+    }
+    .portal-hero-text h1 { font-family: Montserrat, sans-serif; font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .portal-hero-text p { font-family: Montserrat, sans-serif; font-size: 1rem; color: rgba(255,255,255,0.55); font-weight: 300; }
+
+    /* Main content area — same grey5 as nicepage grey sections */
+    .portal-main {
+      background: #f2f2f2; flex: 1; padding: 36px 60px 60px;
+      min-height: calc(100vh - 340px);
+    }
+
+    /* Notice — matches u-palette styling */
+    .portal-notice {
+      background: #e8f1fa; border: 1px solid #adcce9; border-left: 4px solid #478ac9;
+      padding: 13px 16px; margin-bottom: 28px;
+      font-family: Montserrat, sans-serif; font-size: 0.97rem; color: #444; line-height: 1.6;
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .portal-notice svg { flex-shrink: 0; color: #478ac9; margin-top: 1px; }
+
+    .section-lbl {
+      font-family: Montserrat, sans-serif; font-size: 0.82rem; letter-spacing: 2.5px;
+      text-transform: uppercase; color: #478ac9; font-weight: 700;
+      margin-bottom: 14px; padding-bottom: 10px; border-bottom: 2px solid #adcce9;
+    }
+
+    /* Folder cards */
+    .folders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .folder-card {
+      background: #fff; border: 1px solid #dde6f0;
+      border-top: 5px solid var(--fc, #478ac9);
+      padding: 28px 24px 24px;
+      display: flex; flex-direction: column;
+      transition: box-shadow .25s, transform .2s;
+      text-decoration: none;
+    }
+    .folder-card:hover {
+      box-shadow: 0 8px 28px rgba(0,0,0,0.1);
+      transform: translateY(-3px);
+    }
+    .folder-card-icon {
+      width: 60px; height: 68px; border-radius: 12px;
+      background: var(--fi, #dbeaf8);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 18px; flex-shrink: 0;
+    }
+    .folder-card h3 {
+      font-family: Montserrat, sans-serif; font-size: 1.1rem;
+      font-weight: 800; color: #111; margin-bottom: 8px;
+    }
+    .folder-card p {
+      font-family: Montserrat, sans-serif; font-size: 0.97rem;
+      color: #888; line-height: 1.6; flex: 1; margin-bottom: 20px;
+    }
+    .folder-card-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--fc, #478ac9); color: #fff; border: none;
+      border-radius: 30px; padding: 12px 26px;
+      font-family: Montserrat, sans-serif; font-size: 1.05rem;
+      font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+      text-decoration: none; align-self: flex-start;
+      transition: opacity .2s;
+    }
+    .folder-card-btn:hover { opacity: 0.85; }
+    .folder-card.locked {
+      opacity: 0.5; pointer-events: none; filter: grayscale(0.4);
+    }
+    .folder-card.locked .folder-card-btn { background: #aaa; }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center; padding: 72px 24px;
+      font-family: Montserrat, sans-serif; color: #bbb;
+    }
+    .empty-state svg { opacity: 0.3; margin-bottom: 18px; }
+    .empty-state h3 { font-size: 1.1rem; color: #bbb; margin-bottom: 8px; }
+    .empty-state p { font-size: 1rem; line-height: 1.7; }
+
+    /* Footer — matches u-black u-section-9 */
+    .portal-footer {
+      background: #111111; text-align: center; padding: 24px;
+      font-family: Montserrat, sans-serif; font-size: 0.97rem; color: rgba(255,255,255,0.35);
+    }
+
+    @media (max-width: 767px) {
+      .portal-hero { padding: 30px 24px; }
+      .portal-main { padding: 24px 16px 48px; }
+    }
+  </style>
+</head>
+<body data-path-to-root="./" data-include-products="false" class="u-body u-xl-mode" data-lang="en">
+
+  <!-- TOP NAV -->
+  <nav class="portal-topnav">
+    <a href="index.html" class="ptn-brand">
+      <img src="images/1663533747_151635_fs-removebg-preview.png" alt="Arshana Shyamkishore &amp; Associates">
+      <span>Arshana Shyamkishore &amp; Associates</span>
+    </a>
+    <div class="ptn-right">
+      <div class="client-badge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>
+        <span id="clientDisplay">Loading…</span>
+      </div>
+      <button class="btn-signout" onclick="doSignOut()">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="portal-hero">
+    <div class="portal-hero-text">
+      <h5>My Legal Documents</h5>
+      <h1 id="welcomeH">Welcome</h1>
+      <p>The following files have been prepared for you by our office. All documents are strictly confidential.</p>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="portal-main">
+    <div class="portal-notice">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      These documents are strictly confidential and intended solely for your personal use. Do not share your login credentials with any other party. Contact our office with any queries.
+    </div>
+    <div class="section-lbl">Your Document Folders</div>
+    <div id="docsList"></div>
+  </main>
+
+  <!-- FOOTER -->
+  <!-- KTECH BRANDING -->
+  <div style="background:#f2f2f2;padding:32px 24px 24px;display:flex;flex-direction:column;align-items:center;gap:14px;border-top:1px solid #dde6f0;">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <img src="ktech-logo.jpeg" alt="KTech ICT" style="height:52px;object-fit:contain;border-radius:50%;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.12));">
+      <div>
+        <div style="font-family:Montserrat,sans-serif;font-size:0.88rem;font-weight:800;color:#111;letter-spacing:1px;">KTech ICT</div>
+        <div style="font-family:Montserrat,sans-serif;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:#aaa;margin-top:2px;">Web Design &amp; Development</div>
+      </div>
+    </div>
+    <img src="Untitled_video_-_Made_with_Clipchamp.gif" alt="HTML King Protect" style="max-width:180px;opacity:0.85;">
+    <p style="font-family:Montserrat,sans-serif;font-size:0.78rem;color:#aaa;text-align:center;line-height:1.6;max-width:400px;">
+      Designed, Engineered &amp; Secured by <strong style="color:#111;">KTech ICT</strong> · HTML King Protect Ver 10.9
+    </p>
+  </div>
+
+  <footer class="portal-footer">
+    ©Copyright 2026-2027 · Arshana Shyamkishore &amp; Associates · Confidential Client Portal
+  </footer>
+
+  <script>
+    // Auth guard
+    const clientEmail = sessionStorage.getItem('asa_client_email');
+    const clientName  = sessionStorage.getItem('asa_client_name');
+    if (!clientEmail) { window.location.href = 'login.html'; }
+    document.getElementById('clientDisplay').textContent = clientName || clientEmail;
+    document.getElementById('welcomeH').textContent = 'Welcome, ' + (clientName || clientEmail);
+
+    function doSignOut() {
+      sessionStorage.clear();
+      window.location.href = 'login.html';
+    }
+
+    function getExt(n) { return n.split('.').pop().toLowerCase(); }
+    function extClass(n) {
+      const e = getExt(n);
+      if (e === 'pdf') return 'pdf';
+      if (['doc','docx'].includes(e)) return 'docx';
+      if (['xls','xlsx'].includes(e)) return 'xlsx';
+      if (['jpg','jpeg','png','gif','webp'].includes(e)) return 'img';
+      return 'file';
+    }
+    function extLabel(n) {
+      const e = getExt(n);
+      if (e === 'pdf') return 'PDF';
+      if (['doc','docx'].includes(e)) return 'DOC';
+      if (['xls','xlsx'].includes(e)) return 'XLS';
+      if (['jpg','jpeg','png','webp'].includes(e)) return 'IMG';
+      return e.toUpperCase().slice(0,4);
+    }
+    function fmtSize(b) {
+      if (!b) return '';
+      if (b < 1024) return b + ' B';
+      if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+      return (b/1048576).toFixed(1) + ' MB';
+    }
+    function fmtDate(ts) {
+      if (!ts) return '';
+      return new Date(ts).toLocaleDateString('en-ZA', {day:'2-digit', month:'short', year:'numeric'});
+    }
+
+    const FOLDER_DEFS = [
+      {
+        key: 'recordings',
+        label: 'Recordings & Telecon Slips',
+        desc: 'Call recordings, telephone consultation slips and audio evidence',
+        color: '#478ac9', bg: '#dbeaf8',
+        icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#478ac9" stroke-width="1.8"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>'
+      },
+      {
+        key: 'consultation',
+        label: 'Consultation Notes',
+        desc: 'Meeting summaries, written advice and legal consultation records',
+        color: '#5b8c5a', bg: '#d5f5e3',
+        icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5b8c5a" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>'
+      },
+      {
+        key: 'perused',
+        label: 'Perused Documents',
+        desc: 'Court papers, reviewed affidavits, pleadings and filed documents',
+        color: '#8b5e3c', bg: '#fdebd0',
+        icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8b5e3c" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
+      },
+      {
+        key: 'accounts',
+        label: 'Accounts',
+        desc: 'Invoices, fee notes, payment receipts and billing statements',
+        color: '#6a3d9a', bg: '#ede1f7',
+        icon: '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6a3d9a" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>'
+      }
+    ];
+
+    function renderDocs() {
+      const clients = JSON.parse(localStorage.getItem('asa_clients') || '{}');
+      const folders = JSON.parse(localStorage.getItem('asa_folders') || '{}');
+      const client  = clients[clientEmail];
+      const overrides = (client && client.folderOverrides) || {};
+      const list = document.getElementById('docsList');
+
+      const anyLinked = FOLDER_DEFS.some(def => {
+        return overrides[def.key] || (folders[def.key] && folders[def.key].url);
+      });
+
+      if (!anyLinked) {
+        list.innerHTML = `<div class="empty-state">
+          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          <h3>No Folders Available Yet</h3>
+          <p>Your attorney is preparing your documents.<br>Please contact our office: <a href="tel:0314644940" style="color:#478ac9">031 464 4940</a></p>
+        </div>`;
+        return;
+      }
+
+      list.innerHTML = '<div class="folders-grid">' + FOLDER_DEFS.map(def => {
+        const url = overrides[def.key] || (folders[def.key] && folders[def.key].url) || '';
+        const locked = !url;
+        return `<a href="${url || '#'}" target="${url ? '_blank' : '_self'}" rel="noopener noreferrer"
+            class="folder-card${locked ? ' locked' : ''}"
+            style="--fc:${def.color};--fi:${def.bg};"
+            ${!url ? 'onclick="return false;"' : ''}>
+          <div class="folder-card-icon">${def.icon}</div>
+          <h3>${def.label}</h3>
+          <p>${def.desc}</p>
+          <span class="folder-card-btn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+              <polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+            ${locked ? 'Not Available' : 'Open in Drive'}
+          </span>
+        </a>`;
+      }).join('') + '</div>';
+    }
+
+    renderDocs();
+  </script>
+</body>
+</html>

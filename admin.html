@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html style="font-size: 16px;" lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <title>Admin Panel – Arshana Shyamkishore &amp; Associates</title>
+  <link rel="stylesheet" href="nicepage.css" media="screen">
+  <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+  <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+  <meta name="generator" content="Nicepage 8.0.6, nicepage.com">
+  <link id="u-page-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css2?display=swap&family=Roboto:ital,wght@0,100;0,300;0,400;0,700&family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700&family=Montserrat:ital,wght@0,100;0,300;0,400;0,500;0,600;0,700;0,800;0,900&family=Oswald:wght@200;300;400;500;600;700">
+  <meta name="theme-color" content="#478ac9">
+  <meta property="og:title" content="Admin Panel">
+  <meta property="og:type" content="website">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    /* Override nicepage.css u-body/u-xl-mode which adds a max-width container causing white space on right */
+    html, body { max-width: 100% !important; overflow-x: hidden !important; background: #111111 !important; }
+    .u-body { max-width: 100% !important; width: 100% !important; }
+    .app-wrap { width: 100%; min-width: 0; }
+    .content { width: 100%; min-width: 0; }
+
+    /* ── ADMIN LOGIN SCREEN ────────────────────────────────── */
+    #adminLogin {
+      background: #111111; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px;
+    }
+    .al-brand { text-align: center; margin-bottom: 28px; }
+    .al-brand img { height: 52px; object-fit: contain; display: block; margin: 0 auto 10px; }
+    .al-brand h1 { font-family: Montserrat, sans-serif; font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 3px; }
+    .al-brand p  { font-family: Montserrat, sans-serif; font-size: 1.05rem; letter-spacing: 2px; text-transform: uppercase; color: #adcce9; }
+    .al-box {
+      background: #1a1a1a; border: 1px solid rgba(71,138,201,0.2); border-top: 4px solid #478ac9;
+      width: 100%; max-width: 400px; padding: 36px 36px 30px;
+    }
+    .al-icon {
+      width: 48px; height: 48px; border-radius: 50%; background: rgba(71,138,201,0.15);
+      border: 1px solid rgba(71,138,201,0.3); display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .al-box h2 { font-family: Montserrat, sans-serif; font-size: 1.5rem; font-weight: 800; color: #fff; text-align: center; margin-bottom: 4px; }
+    .al-box .al-sub { font-family: Montserrat, sans-serif; font-size: 0.9rem; color: rgba(255,255,255,0.35); text-align: center; margin-bottom: 24px; }
+    .al-err { background: rgba(192,57,43,0.15); border: 1px solid rgba(192,57,43,0.35); color: #e88; padding: 10px 14px; font-family: Montserrat, sans-serif; font-size: 0.95rem; margin-bottom: 14px; display: none; }
+    .al-fg { margin-bottom: 16px; }
+    .al-fg label { display: block; font-family: Montserrat, sans-serif; font-size: 1.05rem; letter-spacing: 2px; text-transform: uppercase; color: #adcce9; font-weight: 700; margin-bottom: 7px; }
+    .al-fg input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 30px; color: #fff; padding: 12px 16px; font-family: Montserrat, sans-serif; font-size: 1.05rem; outline: none; transition: border-color .2s; }
+    .al-fg input:focus { border-color: #478ac9; }
+    .al-fg input::placeholder { color: rgba(255,255,255,0.2); }
+    .al-submit { width: 100%; background: #478ac9; color: #fff; border: none; border-radius: 30px; padding: 13px; font-family: Montserrat, sans-serif; font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: background .2s; }
+    .al-submit:hover { background: #77aad9; }
+    .al-back { display: block; text-align: center; margin-top: 16px; font-family: Montserrat, sans-serif; font-size: 0.9rem; color: rgba(255,255,255,0.25); text-decoration: none; transition: color .2s; }
+    .al-back:hover { color: #adcce9; }
+
+    /* ── APP SHELL ─────────────────────────────────────────── */
+    #adminApp { display: none; }
+    .app-wrap { display: flex; min-height: 100vh; }
+
+    /* SIDEBAR — matches u-black nicepage sections */
+    .sidebar {
+      width: 268px; background: #111111; position: fixed; top: 0; left: 0; height: 100vh;
+      display: flex; flex-direction: column; border-right: 1px solid rgba(71,138,201,0.15); z-index: 50; overflow-y: auto;
+    }
+    .sb-brand { padding: 18px 16px; border-bottom: 1px solid rgba(71,138,201,0.12); }
+    .sb-brand img { height: 34px; object-fit: contain; display: block; margin-bottom: 8px; }
+    .sb-brand h1 { font-family: Montserrat, sans-serif; font-size: 0.95rem; font-weight: 700; color: #fff; line-height: 1.3; }
+    .sb-brand p { font-family: Montserrat, sans-serif; font-size: 0.92rem; letter-spacing: 2px; text-transform: uppercase; color: #77aad9; margin-top: 3px; }
+    .sb-nav { flex: 1; padding: 12px 0; }
+    .sb-sec { font-family: Montserrat, sans-serif; font-size: 0.92rem; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.2); padding: 10px 16px 5px; font-weight: 600; }
+    .sb-item { display: flex; align-items: center; gap: 10px; padding: 12px 18px; font-family: Montserrat, sans-serif; font-size: 0.95rem; color: rgba(255,255,255,0.45); cursor: pointer; border-left: 3px solid transparent; transition: all .15s; font-weight: 500; }
+    .sb-item:hover { color: #fff; background: rgba(255,255,255,0.04); }
+    .sb-item.active { color: #adcce9; background: rgba(71,138,201,0.1); border-left-color: #478ac9; }
+    .sb-item svg { flex-shrink: 0; }
+    .sb-foot { padding: 14px 16px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .sb-who { font-family: Montserrat, sans-serif; font-size: 0.9rem; color: rgba(255,255,255,0.3); margin-bottom: 10px; }
+    .sb-who strong { display: block; color: #adcce9; font-size: 0.95rem; margin-bottom: 2px; }
+    .btn-sb-out { width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.12); border-radius: 30px; color: rgba(255,255,255,0.35); padding: 8px; font-family: Montserrat, sans-serif; font-size: 1.05rem; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all .2s; }
+    .btn-sb-out:hover { border-color: #adcce9; color: #adcce9; }
+
+    /* CONTENT */
+    .content { margin-left: 268px; display: flex; flex-direction: column; min-height: 100vh; background: #f2f2f2; }
+    .topbar { background: #1a1a1a; border-bottom: 1px solid rgba(71,138,201,0.12); height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
+    .topbar-title { font-family: Montserrat, sans-serif; font-size: 1.05rem; font-weight: 800; color: #fff; }
+    .badge-admin { font-family: Montserrat, sans-serif; font-size: 1.05rem; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; background: rgba(71,138,201,0.15); border: 1px solid rgba(71,138,201,0.25); border-radius: 30px; color: #adcce9; padding: 4px 12px; }
+
+    /* PANELS */
+    .panel { display: none; padding: 24px; }
+    .panel.active { display: block; }
+
+    /* STATS */
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 12px; margin-bottom: 22px; }
+    .stat-card { background: #fff; border: 1px solid #dde6f0; border-top: 3px solid #478ac9; padding: 18px; }
+    .stat-card .sv { font-family: Montserrat, sans-serif; font-size: 1.9rem; font-weight: 800; color: #478ac9; }
+    .stat-card .sl { font-family: Montserrat, sans-serif; font-size: 0.95rem; letter-spacing: 1.5px; text-transform: uppercase; color: #999; margin-top: 3px; }
+
+    /* CARDS */
+    .card { background: #fff; border: 1px solid #dde6f0; margin-bottom: 20px; }
+    .card-head { padding: 14px 20px; border-bottom: 1px solid #edf0f4; display: flex; align-items: center; justify-content: space-between; }
+    .card-head h3 { font-family: Montserrat, sans-serif; font-size: 1.05rem; font-weight: 700; color: #111; }
+    .card-body { padding: 20px; }
+
+    /* FORMS */
+    .fg { margin-bottom: 15px; }
+    .fg label { display: block; font-family: Montserrat, sans-serif; font-size: 0.95rem; letter-spacing: 2px; text-transform: uppercase; color: #478ac9; font-weight: 700; margin-bottom: 7px; }
+    .fg input, .fg select, .fg textarea { width: 100%; border: 1px solid #d0d0d0; border-radius: 30px; background: #f2f2f2; color: #111; padding: 12px 18px; font-family: Montserrat, sans-serif; font-size: 1.05rem; outline: none; transition: border-color .2s, box-shadow .2s; }
+    .fg select { border-radius: 6px; }
+    .fg textarea { border-radius: 6px; resize: vertical; min-height: 72px; }
+    .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: #478ac9; box-shadow: 0 0 0 3px rgba(71,138,201,0.1); background: #fff; }
+    .fg input::placeholder, .fg textarea::placeholder { color: #bbb; }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width:600px) { .row2 { grid-template-columns: 1fr; } }
+
+    /* BUTTONS */
+    .btn-primary { background: #478ac9; color: #fff; border: none; border-radius: 30px; padding: 11px 24px; font-family: Montserrat, sans-serif; font-size: 1.05rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: background .2s; }
+    .btn-primary:hover { background: #77aad9; }
+    .btn-sm { padding: 10px 19px; font-size: 1.05rem; }
+    .btn-danger { background: transparent; border: 1px solid rgba(192,57,43,0.35); border-radius: 30px; color: #c0392b; padding: 10px 19px; font-family: Montserrat, sans-serif; font-size: 1.05rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all .2s; }
+    .btn-danger:hover { background: rgba(192,57,43,0.08); }
+    .btn-warn { background: transparent; border: 1px solid rgba(201,168,76,0.4); border-radius: 30px; color: #9a7d0a; padding: 10px 19px; font-family: Montserrat, sans-serif; font-size: 1.05rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all .2s; }
+    .btn-warn:hover { background: rgba(201,168,76,0.1); }
+
+    /* TABLE */
+    .np-tbl { width: 100%; border-collapse: collapse; }
+    .np-tbl th { text-align: left; font-family: Montserrat, sans-serif; font-size: 0.95rem; letter-spacing: 2px; text-transform: uppercase; color: #aaa; padding: 9px 13px; border-bottom: 1px solid #eee; font-weight: 600; }
+    .np-tbl td { padding: 12px 13px; font-family: Montserrat, sans-serif; font-size: 1.05rem; border-bottom: 1px solid #f4f4f4; vertical-align: middle; }
+    .np-tbl tr:last-child td { border-bottom: none; }
+    .np-tbl tr:hover td { background: #f9fbff; }
+    .td-email { color: #478ac9; font-size: 0.92rem; }
+    .td-name  { font-weight: 600; color: #111; }
+    .dc-badge { background: #dbeaf8; color: #478ac9; border-radius: 30px; padding: 3px 10px; font-size: 0.88rem; font-weight: 700; display: inline-block; }
+    .tbl-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    /* UPLOAD ZONE */
+    .upload-zone { border: 2px dashed #adcce9; padding: 32px; text-align: center; cursor: pointer; transition: all .2s; position: relative; border-radius: 4px; }
+    .upload-zone:hover, .upload-zone.hover { border-color: #478ac9; background: rgba(71,138,201,0.04); }
+    .upload-zone input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+    .upload-zone svg { color: #478ac9; opacity: 0.4; margin-bottom: 8px; }
+    .upload-zone h4 { font-family: Montserrat, sans-serif; font-size: 1.05rem; color: #777; margin-bottom: 4px; font-weight: 500; }
+    .upload-zone p  { font-family: Montserrat, sans-serif; font-size: 0.9rem; color: #bbb; }
+    .staged-list { display: flex; flex-direction: column; gap: 7px; margin-top: 14px; }
+    .staged-item { background: #f2f2f2; border: 1px solid #ddd; padding: 12px 15px; display: flex; align-items: center; gap: 11px; border-radius: 4px; }
+    .staged-ext { width: 34px; height: 34px; background: #adcce9; border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: Montserrat, sans-serif; font-size: 0.95rem; font-weight: 800; color: #478ac9; }
+    .staged-info { flex: 1; min-width: 0; }
+    .staged-info .sn { font-family: Montserrat, sans-serif; font-size: 1.05rem; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .staged-info .ss { font-family: Montserrat, sans-serif; font-size: 0.88rem; color: #aaa; margin-top: 2px; }
+    .staged-rm { background: none; border: none; color: #ccc; cursor: pointer; padding: 3px; transition: color .2s; display: flex; }
+    .staged-rm:hover { color: #c0392b; }
+
+    /* ASSIGN */
+    .assign-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width:700px) { .assign-grid { grid-template-columns: 1fr; } }
+    .assign-col-title { font-family: Montserrat, sans-serif; font-size: 0.95rem; letter-spacing: 2px; text-transform: uppercase; color: #478ac9; font-weight: 700; margin-bottom: 10px; padding-bottom: 7px; border-bottom: 2px solid #adcce9; }
+    .assign-item { background: #f2f2f2; border: 1px solid #dde6f0; border-left: 3px solid #478ac9; padding: 12px 15px; display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
+    .assign-item .ai-name { flex: 1; font-family: Montserrat, sans-serif; font-size: 0.98rem; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .assign-item .ai-cat  { font-family: Montserrat, sans-serif; font-size: 0.63rem; color: #aaa; margin-right: 8px; flex-shrink: 0; }
+
+    /* EDIT MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 300; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: #fff; width: 100%; max-width: 440px; padding: 30px; border-top: 4px solid #478ac9; box-shadow: 0 8px 40px rgba(0,0,0,0.18); }
+    .modal h3 { font-family: Montserrat, sans-serif; font-size: 1.05rem; font-weight: 800; color: #111; margin-bottom: 5px; }
+    .modal .msub { font-family: Montserrat, sans-serif; font-size: 0.95rem; color: #888; margin-bottom: 20px; line-height: 1.6; }
+    .modal-btns { display: flex; gap: 10px; margin-top: 18px; }
+
+    /* EMPTY */
+    .empty-row { text-align: center; padding: 32px 16px; font-family: Montserrat, sans-serif; font-size: 1.05rem; color: #bbb; }
+    .empty-assign { font-family: Montserrat, sans-serif; font-size: 0.95rem; color: #bbb; padding: 12px; }
+
+    /* TOAST */
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #27ae60; color: #fff; padding: 12px 20px; font-family: Montserrat, sans-serif; font-size: 1.05rem; font-weight: 500; border-radius: 30px; opacity: 0; transform: translateY(8px); transition: all .25s; z-index: 999; pointer-events: none; display: flex; align-items: center; gap: 8px; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.err   { background: #c0392b; }
+
+    @media (max-width:768px) {
+      .sidebar { display: none; }
+      .content { margin-left: 0; }
+    }
+  </style>
+</head>
+<body data-path-to-root="./" data-include-products="false" class="u-body u-xl-mode" data-lang="en">
+
+<!-- ══ ADMIN LOGIN ══════════════════════════════════════════ -->
+<div id="adminLogin">
+  <div class="al-brand">
+    <img src="images/1663533747_151635_fs-removebg-preview.png" alt="Logo">
+    <h1>Arshana Shyamkishore &amp; Associates</h1>
+    <p>Staff Administration Portal</p>
+  </div>
+  <div class="al-box">
+    <div class="al-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#478ac9" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <h2>Admin Access</h2>
+    <p class="al-sub">Authorised personnel only</p>
+    <div class="al-err" id="alErr">Incorrect password. Please try again.</div>
+    <div class="al-fg">
+      <label>Admin Password</label>
+      <div style="position:relative;">
+        <input type="password" id="alPass" placeholder="Enter admin password" autocomplete="current-password" style="padding-right:50px;">
+        <button type="button" onclick="togglePwField('alPass',this)" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.3);padding:4px;display:flex;align-items:center;transition:color .2s;" onmouseover="this.style.color='#adcce9'" onmouseout="this.style.color='rgba(255,255,255,0.3)'">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </div>
+    <button class="al-submit" onclick="adminLogin()">Enter Admin Panel</button>
+    <a href="index.html" class="al-back">← Return to Website</a>
+  </div>
+</div>
+
+<!-- ══ ADMIN APP ════════════════════════════════════════════ -->
+<div id="adminApp">
+<div class="app-wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <img src="images/1663533747_151635_fs-removebg-preview.png" alt="Logo">
+      <h1>Arshana Shyamkishore &amp; Associates</h1>
+      <p>Admin Panel</p>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-sec">Overview</div>
+      <div class="sb-item active" onclick="go('dashboard',this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </div>
+      <div class="sb-sec">Clients</div>
+      <div class="sb-item" onclick="go('clients',this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>
+        All Clients
+      </div>
+      <div class="sb-item" onclick="go('addClient',this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add New Client
+      </div>
+      <div class="sb-sec">Documents</div>
+      <div class="sb-item" onclick="go('upload',this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+        Drive Folders
+      </div>
+      <div class="sb-item" onclick="go('assign',this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+        Assign to Clients
+      </div>
+      <div class="sb-sec">Site</div>
+      <div class="sb-item" onclick="window.open('index.html','_blank')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+        View Website
+      </div>
+    </nav>
+    <div class="sb-foot">
+      <div style="text-align:center;margin-bottom:14px;">
+        <img src="ktech-logo.jpeg" alt="KTech ICT" style="width:52px;height:52px;object-fit:contain;border-radius:50%;border:2px solid rgba(71,138,201,0.3);display:block;margin:0 auto 8px;">
+        <div style="font-family:Montserrat,sans-serif;font-size:0.72rem;font-weight:700;color:#adcce9;letter-spacing:1px;">KTech ICT</div>
+        <div style="font-family:Montserrat,sans-serif;font-size:0.6rem;color:rgba(255,255,255,0.2);letter-spacing:1px;text-transform:uppercase;">Secured Portal</div>
+      </div>
+      <div class="sb-who"><strong>Administrator</strong>Arshana Shyamkishore &amp; Assoc.</div>
+      <button class="btn-sb-out" onclick="adminLogout()">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- CONTENT AREA -->
+  <div class="content">
+    <div class="topbar">
+      <span class="topbar-title" id="panelTitle">Dashboard</span>
+      <span class="badge-admin">Administrator</span>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="panel active" id="p-dashboard">
+      <div class="stats-row">
+        <div class="stat-card"><div class="sv" id="stC">0</div><div class="sl">Registered Clients</div></div>
+        <div class="stat-card"><div class="sv" id="stD">0</div><div class="sl">Assigned Documents</div></div>
+        <div class="stat-card"><div class="sv" id="stL">0</div><div class="sl">Library Files</div></div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h3>Recent Clients</h3>
+          <button class="btn-primary btn-sm" onclick="go('addClient',null)">+ Add Client</button>
+        </div>
+        <div id="dashClientList" style="overflow-x:auto"></div>
+      </div>
+    </div>
+
+    <!-- ALL CLIENTS -->
+    <div class="panel" id="p-clients">
+      <div class="card">
+        <div class="card-head">
+          <h3>All Clients</h3>
+          <button class="btn-primary btn-sm" onclick="go('addClient',null)">+ Add Client</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="np-tbl">
+            <thead><tr>
+              <th>Name</th><th>Email Address</th><th>Matter / Case</th>
+              <th>Files</th><th>Date Added</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="clientsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD CLIENT -->
+    <div class="panel" id="p-addClient">
+      <div class="card" style="max-width:620px">
+        <div class="card-head"><h3>Add New Client</h3></div>
+        <div class="card-body">
+          <div class="row2">
+            <div class="fg"><label>Full Name</label><input type="text" id="nc_name" placeholder="e.g. Thabo Nkosi"></div>
+            <div class="fg"><label>Matter / Case Reference</label><input type="text" id="nc_matter" placeholder="e.g. Estate Late T. Nkosi"></div>
+          </div>
+          <div class="fg"><label>Email Address</label><input type="email" id="nc_email" placeholder="client@email.com"></div>
+          <div class="fg">
+            <label>Password (to give to client)</label>
+            <div style="position:relative;">
+              <input type="password" id="nc_pass" placeholder="Choose a password for this client" style="padding-right:50px;">
+              <button type="button" onclick="togglePwField('nc_pass',this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#aaa;padding:4px;display:flex;align-items:center;transition:color .2s;" onmouseover="this.style.color='#478ac9'" onmouseout="this.style.color='#aaa'">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="fg"><label>Notes (internal, optional)</label><textarea id="nc_notes" placeholder="Any internal notes about this client…"></textarea></div>
+          <button class="btn-primary" onclick="addClient()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Create Client Account
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MANAGE DRIVE FOLDERS -->
+    <div class="panel" id="p-upload">
+      <style>
+        .folder-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 18px; margin-bottom: 24px; }
+        .folder-card {
+          background: #fff; border: 1px solid #dde6f0; border-top: 4px solid var(--fc, #478ac9);
+          padding: 24px 22px; transition: box-shadow .2s;
+        }
+        .folder-card:hover { box-shadow: 0 4px 20px rgba(71,138,201,0.12); }
+        .folder-card-top { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+        .folder-icon {
+          width: 52px; height: 52px; border-radius: 8px; flex-shrink: 0;
+          display: flex; align-items: center; justify-content: center;
+          background: var(--fi, #dbeaf8);
+        }
+        .folder-icon svg { color: var(--fc, #478ac9); }
+        .folder-label h4 { font-family: Montserrat,sans-serif; font-size: 1.05rem; font-weight: 800; color: #111; margin-bottom: 3px; }
+        .folder-label p  { font-family: Montserrat,sans-serif; font-size: 0.9rem; color: #999; line-height: 1.5; }
+        .folder-input-row { display: flex; gap: 8px; align-items: center; }
+        .folder-input-row input {
+          flex: 1; border: 1px solid #d0d0d0; border-radius: 30px;
+          background: #f2f2f2; color: #111; padding: 11px 16px;
+          font-family: Montserrat,sans-serif; font-size: 0.98rem; outline: none;
+          transition: border-color .2s;
+        }
+        .folder-input-row input:focus { border-color: #478ac9; background: #fff; }
+        .folder-input-row input::placeholder { color: #bbb; }
+        .folder-save-btn {
+          background: #478ac9; color: #fff; border: none; border-radius: 30px;
+          padding: 11px 22px; font-family: Montserrat,sans-serif; font-size: 1.05rem;
+          font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+          cursor: pointer; white-space: nowrap; transition: background .2s; flex-shrink: 0;
+        }
+        .folder-save-btn:hover { background: #77aad9; }
+        .folder-status {
+          margin-top: 10px; font-family: Montserrat,sans-serif; font-size: 0.9rem;
+          display: flex; align-items: center; gap: 7px;
+        }
+        .folder-status.linked { color: #27ae60; }
+        .folder-status.unlinked { color: #bbb; }
+        .folder-open-btn {
+          display: inline-flex; align-items: center; gap: 6px;
+          margin-top: 10px; font-family: Montserrat,sans-serif; font-size: 1.05rem;
+          font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+          color: #478ac9; text-decoration: none; border: 1px solid rgba(71,138,201,0.3);
+          border-radius: 30px; padding: 8px 17px; transition: all .2s;
+        }
+        .folder-open-btn:hover { background: #478ac9; color: #fff; }
+        .lib-setup-note {
+          background: #e8f1fa; border: 1px solid #adcce9; border-left: 4px solid #478ac9;
+          padding: 14px 18px; font-family: Montserrat,sans-serif; font-size: 0.98rem;
+          color: #444; line-height: 1.7; margin-bottom: 22px; display: flex; gap: 12px;
+        }
+        .lib-setup-note svg { flex-shrink: 0; color: #478ac9; margin-top: 2px; }
+      </style>
+
+      <div class="lib-setup-note">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>In Google Drive, create the 4 folders below, right-click each → <strong>Share → Anyone with the link</strong>, copy the link and paste it here. Documents you upload to Drive will be instantly available to clients — no size limits, no file count limits.</span>
+      </div>
+
+      <div class="folder-grid">
+
+        <!-- RECORDINGS & TELECON SLIPS -->
+        <div class="folder-card" style="--fc:#478ac9;--fi:#dbeaf8;">
+          <div class="folder-card-top">
+            <div class="folder-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="23"/>
+                <line x1="8" y1="23" x2="16" y2="23"/>
+              </svg>
+            </div>
+            <div class="folder-label">
+              <h4>Recordings &amp; Telecon Slips</h4>
+              <p>Call recordings, telephone consultation slips and audio evidence</p>
+            </div>
+          </div>
+          <div class="folder-input-row">
+            <input type="url" id="fl_recordings" placeholder="Paste Google Drive folder link…">
+            <button class="folder-save-btn" onclick="saveFolder('recordings')">Save</button>
+          </div>
+          <div class="folder-status" id="fs_recordings"></div>
+          <div id="fo_recordings"></div>
+        </div>
+
+        <!-- CONSULTATION NOTES -->
+        <div class="folder-card" style="--fc:#5b8c5a;--fi:#d5f5e3;">
+          <div class="folder-card-top">
+            <div class="folder-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#5b8c5a" stroke-width="1.8">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14,2 14,8 20,8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10,9 9,9 8,9"/>
+              </svg>
+            </div>
+            <div class="folder-label">
+              <h4>Consultation Notes</h4>
+              <p>Meeting summaries, written advice and legal consultation records</p>
+            </div>
+          </div>
+          <div class="folder-input-row">
+            <input type="url" id="fl_consultation" placeholder="Paste Google Drive folder link…">
+            <button class="folder-save-btn" style="background:#5b8c5a;" onmouseover="this.style.background='#7ab87a'" onmouseout="this.style.background='#5b8c5a'" onclick="saveFolder('consultation')">Save</button>
+          </div>
+          <div class="folder-status" id="fs_consultation"></div>
+          <div id="fo_consultation"></div>
+        </div>
+
+        <!-- PERUSED DOCUMENTS -->
+        <div class="folder-card" style="--fc:#8b5e3c;--fi:#fdebd0;">
+          <div class="folder-card-top">
+            <div class="folder-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#8b5e3c" stroke-width="1.8">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                <line x1="11" y1="8" x2="11" y2="14"/>
+                <line x1="8" y1="11" x2="14" y2="11"/>
+              </svg>
+            </div>
+            <div class="folder-label">
+              <h4>Perused Documents</h4>
+              <p>Court papers, reviewed affidavits, pleadings and filed documents</p>
+            </div>
+          </div>
+          <div class="folder-input-row">
+            <input type="url" id="fl_perused" placeholder="Paste Google Drive folder link…">
+            <button class="folder-save-btn" style="background:#8b5e3c;" onmouseover="this.style.background='#b07d55'" onmouseout="this.style.background='#8b5e3c'" onclick="saveFolder('perused')">Save</button>
+          </div>
+          <div class="folder-status" id="fs_perused"></div>
+          <div id="fo_perused"></div>
+        </div>
+
+        <!-- ACCOUNTS -->
+        <div class="folder-card" style="--fc:#6a3d9a;--fi:#ede1f7;">
+          <div class="folder-card-top">
+            <div class="folder-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#6a3d9a" stroke-width="1.8">
+                <rect x="2" y="3" width="20" height="14" rx="2"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+                <path d="M6 8h.01M9 8h6M6 11h.01M9 11h3"/>
+              </svg>
+            </div>
+            <div class="folder-label">
+              <h4>Accounts</h4>
+              <p>Invoices, fee notes, payment receipts and billing statements</p>
+            </div>
+          </div>
+          <div class="folder-input-row">
+            <input type="url" id="fl_accounts" placeholder="Paste Google Drive folder link…">
+            <button class="folder-save-btn" style="background:#6a3d9a;" onmouseover="this.style.background='#8e5ec7'" onmouseout="this.style.background='#6a3d9a'" onclick="saveFolder('accounts')">Save</button>
+          </div>
+          <div class="folder-status" id="fs_accounts"></div>
+          <div id="fo_accounts"></div>
+        </div>
+
+      </div><!-- .folder-grid -->
+
+      <!-- PER-CLIENT FOLDER OVERRIDES -->
+      <div class="card">
+        <div class="card-head">
+          <h3>Client-Specific Folder Overrides</h3>
+        </div>
+        <div class="card-body">
+          <p style="font-family:Montserrat,sans-serif;font-size:0.8rem;color:#888;margin-bottom:18px;line-height:1.7">
+            By default all clients see the main folders above. If a client has their own dedicated sub-folders in Drive, override them here — only that client will see those links.
+          </p>
+          <div class="fg" style="max-width:380px">
+            <label>Select Client</label>
+            <select id="overrideSel" onchange="renderOverrides()">
+              <option value="">— Choose a client —</option>
+            </select>
+          </div>
+          <div id="overrideArea" style="display:none">
+            <div class="folder-grid" id="overrideGrid"></div>
+            <button class="btn-primary btn-sm" onclick="saveOverrides()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>
+              Save Overrides
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CLIENT FOLDER VIEW -->
+    <div class="panel" id="p-assign">
+      <div class="card">
+        <div class="card-head"><h3>Client Folder Access Overview</h3></div>
+        <div class="card-body">
+          <p style="font-family:Montserrat,sans-serif;font-size:0.8rem;color:#888;margin-bottom:20px;line-height:1.7">
+            Select a client to review which Drive folders they will see. All clients see the main folders by default. Use <strong style="color:#478ac9">Drive Folders → Client-Specific Overrides</strong> to assign custom links per client.
+          </p>
+          <div style="max-width:380px;margin-bottom:24px">
+            <div class="fg" style="margin:0">
+              <label>Select Client</label>
+              <select id="assignSel" onchange="renderAssign()">
+                <option value="">— Choose a client —</option>
+              </select>
+            </div>
+          </div>
+          <div id="assignArea" style="display:none">
+            <div id="clientFolderPreview"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- .content -->
+</div><!-- .app-wrap -->
+</div><!-- #adminApp -->
+
+<!-- EDIT CLIENT MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h3>Edit Client</h3>
+    <p class="msub">Updating details for: <strong id="editEmailLbl" style="color:#478ac9"></strong></p>
+    <div class="fg">
+      <label>Password</label>
+      <div style="position:relative;">
+        <input type="password" id="editPass" placeholder="New password" style="padding-right:50px;">
+        <button type="button" onclick="togglePwField('editPass',this)" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#aaa;padding:4px;display:flex;align-items:center;transition:color .2s;" onmouseover="this.style.color='#478ac9'" onmouseout="this.style.color='#aaa'">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="fg"><label>Full Name</label><input type="text" id="editName" placeholder="Full name"></div>
+    <div class="fg"><label>Matter / Case Reference</label><input type="text" id="editMatter" placeholder="Matter reference"></div>
+    <div class="fg"><label>Internal Notes</label><textarea id="editNotes" placeholder="Internal notes…"></textarea></div>
+    <div class="modal-btns">
+      <button class="btn-primary" onclick="saveEdit()">Save Changes</button>
+      <button class="btn-danger" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── AUTH ────────────────────────────────────────────────────
+  // Password stored as SHA-256 hash — real password never appears in source code
+  // To change: hash your new password using the browser console tool in admin instructions
+  const ADMIN_HASH = '96030ee8687a71dfe29701a8fc6fc1928b8526c1e5b3a5748e448bae313dd17e';
+
+  async function checkAdminPassword(pw) {
+    const buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
+    const hash = [...new Uint8Array(buf)].map(x => x.toString(16).padStart(2,'0')).join('');
+    return hash === ADMIN_HASH;
+  }
+
+  function togglePwField(id, btn) {
+    const inp = document.getElementById(id);
+    if (inp.type === 'password') {
+      inp.type = 'text';
+      btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+    } else {
+      inp.type = 'password';
+      btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+    }
+  }
+
+  async function adminLogin() {
+    const pw = document.getElementById('alPass').value;
+    const ok = await checkAdminPassword(pw);
+    if (ok) {
+      sessionStorage.setItem('asa_admin','1');
+      document.getElementById('adminLogin').style.display = 'none';
+      document.getElementById('adminApp').style.display = 'block';
+      initAdmin();
+    } else {
+      document.getElementById('alErr').style.display = 'block';
+    }
+  }
+  function adminLogout() {
+    sessionStorage.removeItem('asa_admin');
+    document.getElementById('adminLogin').style.display = 'flex';
+    document.getElementById('adminApp').style.display = 'none';
+    document.getElementById('alPass').value = '';
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && document.getElementById('adminLogin').style.display !== 'none') adminLogin();
+  });
+  if (sessionStorage.getItem('asa_admin') === '1') {
+    document.getElementById('adminLogin').style.display = 'none';
+    document.getElementById('adminApp').style.display = 'block';
+    setTimeout(initAdmin, 50);
+  }
+
+  // ── DATA ────────────────────────────────────────────────────
+  function gc() { try { return JSON.parse(localStorage.getItem('asa_clients')||'{}'); } catch(e){return{};} }
+  function sc(c) { localStorage.setItem('asa_clients', JSON.stringify(c)); }
+  function gl() { try { return JSON.parse(localStorage.getItem('asa_library')||'[]'); } catch(e){return[];} }
+  function sl(l) { localStorage.setItem('asa_library', JSON.stringify(l)); }
+
+  // ── PANELS ──────────────────────────────────────────────────
+  const ptitles = { dashboard:'Dashboard', clients:'All Clients', addClient:'Add New Client', upload:'Drive Folder Links', assign:'Assign to Clients' };
+  function go(id, el) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('p-'+id).classList.add('active');
+    document.getElementById('panelTitle').textContent = ptitles[id]||id;
+    if (el) { document.querySelectorAll('.sb-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); }
+    if (id==='dashboard') refreshDash();
+    if (id==='clients')   renderClients();
+    if (id==='upload')    initUploadPanel();
+    if (id==='assign')    { populateAssignSel(); renderAssign(); }
+  }
+  function initAdmin() { refreshDash(); }
+
+  // ── DASHBOARD ───────────────────────────────────────────────
+  function refreshDash() {
+    const c=gc(), lib=gl(), arr=Object.values(c);
+    const total = arr.reduce((s,x) => s+(x.documents||[]).length, 0);
+    document.getElementById('stC').textContent = arr.length;
+    document.getElementById('stD').textContent = total;
+    document.getElementById('stL').textContent = lib.length;
+    const dl = document.getElementById('dashClientList');
+    if (!arr.length) {
+      dl.innerHTML = '<div class="empty-row">No clients yet. <a href="#" onclick="go(\'addClient\',null);return false;" style="color:#478ac9">Add the first client.</a></div>';
+      return;
+    }
+    dl.innerHTML = `<table class="np-tbl"><thead><tr><th>Name</th><th>Email</th><th>Documents</th></tr></thead><tbody>
+      ${arr.slice(-6).reverse().map(x=>`<tr><td class="td-name">${x.name||'—'}</td><td class="td-email">${x.email}</td><td><span class="dc-badge">${(x.documents||[]).length}</span></td></tr>`).join('')}
+    </tbody></table>`;
+  }
+
+  // ── CLIENTS ─────────────────────────────────────────────────
+  function renderClients() {
+    const c=gc(), arr=Object.values(c);
+    const tb = document.getElementById('clientsTbody');
+    if (!arr.length) { tb.innerHTML = '<tr><td colspan="6" class="empty-row">No clients registered yet.</td></tr>'; return; }
+    tb.innerHTML = arr.map(x=>`
+      <tr>
+        <td class="td-name">${x.name||'—'}</td>
+        <td class="td-email">${x.email}</td>
+        <td style="font-size:0.72rem;color:#777">${x.matter||'—'}</td>
+        <td><span class="dc-badge">${(x.documents||[]).length} file${(x.documents||[]).length!==1?'s':''}</span></td>
+        <td style="font-size:0.68rem;color:#aaa">${x.addedAt ? new Date(x.addedAt).toLocaleDateString('en-ZA') : '—'}</td>
+        <td>
+          <div class="tbl-actions">
+            <button class="btn-warn btn-sm" onclick="openEdit('${x.email}')">Edit</button>
+            <button class="btn-danger btn-sm" onclick="deleteClient('${x.email}')">Remove</button>
+          </div>
+        </td>
+      </tr>`).join('');
+  }
+
+  function addClient() {
+    const name   = document.getElementById('nc_name').value.trim();
+    const matter = document.getElementById('nc_matter').value.trim();
+    const email  = document.getElementById('nc_email').value.trim().toLowerCase();
+    const pass   = document.getElementById('nc_pass').value;
+    const notes  = document.getElementById('nc_notes').value.trim();
+    if (!email||!pass) { toast('Email and password are required.',true); return; }
+    const c = gc();
+    if (c[email]) { toast('A client with this email already exists.',true); return; }
+    c[email] = { name, matter, email, password:pass, notes, documents:[], addedAt:Date.now() };
+    sc(c);
+    ['nc_name','nc_matter','nc_email','nc_pass','nc_notes'].forEach(id => document.getElementById(id).value='');
+    toast('Client account created successfully.');
+    refreshDash();
+  }
+
+  function deleteClient(email) {
+    if (!confirm('Remove client "'+email+'" and all their assigned documents? This cannot be undone.')) return;
+    const c=gc(); delete c[email]; sc(c);
+    renderClients(); refreshDash();
+    toast('Client removed.');
+  }
+
+  // ── EDIT MODAL ──────────────────────────────────────────────
+  let _editEmail = '';
+  function openEdit(email) {
+    const c=gc(), x=c[email];
+    if (!x) return;
+    _editEmail = email;
+    document.getElementById('editEmailLbl').textContent = email;
+    document.getElementById('editPass').value   = x.password||'';
+    document.getElementById('editName').value   = x.name||'';
+    document.getElementById('editMatter').value = x.matter||'';
+    document.getElementById('editNotes').value  = x.notes||'';
+    document.getElementById('editModal').classList.add('open');
+  }
+  function closeModal() { document.getElementById('editModal').classList.remove('open'); }
+  function saveEdit() {
+    const pass   = document.getElementById('editPass').value;
+    const name   = document.getElementById('editName').value.trim();
+    const matter = document.getElementById('editMatter').value.trim();
+    const notes  = document.getElementById('editNotes').value.trim();
+    if (!pass) { toast('Password cannot be empty.',true); return; }
+    const c=gc();
+    if (!c[_editEmail]) return;
+    c[_editEmail].password = pass;
+    c[_editEmail].name   = name   || c[_editEmail].name;
+    c[_editEmail].matter = matter || c[_editEmail].matter;
+    c[_editEmail].notes  = notes;
+    sc(c); closeModal(); renderClients(); refreshDash();
+    toast('Client updated successfully.');
+  }
+  document.getElementById('editModal').addEventListener('click', function(e) { if(e.target===this) closeModal(); });
+
+  // ── DRIVE FOLDERS ───────────────────────────────────────────
+  const FOLDER_DEFS = [
+    { key:'recordings',   label:'Recordings & Telecon Slips',  color:'#478ac9', bg:'#dbeaf8' },
+    { key:'consultation', label:'Consultation Notes',          color:'#5b8c5a', bg:'#d5f5e3' },
+    { key:'perused',      label:'Perused Documents',           color:'#8b5e3c', bg:'#fdebd0' },
+    { key:'accounts',     label:'Accounts',                    color:'#6a3d9a', bg:'#ede1f7' }
+  ];
+
+  function gf() { try { return JSON.parse(localStorage.getItem('asa_folders')||'{}'); } catch(e){return{};} }
+  function sf(f) { localStorage.setItem('asa_folders', JSON.stringify(f)); }
+
+  // Convert any Google Drive share URL to a clean openable link
+  function cleanDriveUrl(url) {
+    if (!url) return '';
+    // folder: https://drive.google.com/drive/folders/ID?usp=sharing → keep as is
+    // file view: https://drive.google.com/file/d/ID/view → keep as is
+    return url.trim();
+  }
+
+  function saveFolder(key) {
+    const input = document.getElementById('fl_'+key);
+    const url = input.value.trim();
+    if (!url) { toast('Please paste a Google Drive link first.', true); return; }
+    if (!url.includes('drive.google.com') && !url.includes('docs.google.com')) {
+      toast('That does not look like a Google Drive link.', true); return;
+    }
+    const folders = gf();
+    folders[key] = { url: cleanDriveUrl(url), savedAt: Date.now() };
+    sf(folders);
+    renderFolderStatuses();
+    toast('Folder link saved for ' + FOLDER_DEFS.find(f=>f.key===key).label + '.');
+  }
+
+  function renderFolderStatuses() {
+    const folders = gf();
+    FOLDER_DEFS.forEach(def => {
+      const st  = document.getElementById('fs_'+def.key);
+      const fo  = document.getElementById('fo_'+def.key);
+      const inp = document.getElementById('fl_'+def.key);
+      if (!st) return;
+      if (folders[def.key] && folders[def.key].url) {
+        inp.value = folders[def.key].url;
+        st.className = 'folder-status linked';
+        st.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg> Linked — clients will see this folder';
+        fo.innerHTML = '<a class="folder-open-btn" href="'+folders[def.key].url+'" target="_blank"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Open in Drive</a>';
+      } else {
+        st.className = 'folder-status unlinked';
+        st.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Not linked yet';
+        fo.innerHTML = '';
+      }
+    });
+  }
+
+  // Client-specific overrides
+  function populateOverrideSel() {
+    const c=gc(), sel=document.getElementById('overrideSel'), cur=sel.value;
+    sel.innerHTML='<option value="">— Choose a client —</option>';
+    Object.values(c).forEach(x => {
+      const o=document.createElement('option');
+      o.value=x.email; o.textContent=(x.name?x.name+' — ':'')+x.email;
+      sel.appendChild(o);
+    });
+    if (cur) sel.value=cur;
+  }
+
+  function renderOverrides() {
+    const email=document.getElementById('overrideSel').value;
+    const area=document.getElementById('overrideArea');
+    if (!email) { area.style.display='none'; return; }
+    area.style.display='block';
+    const c=gc(), overrides=(c[email]&&c[email].folderOverrides)||{};
+    document.getElementById('overrideGrid').innerHTML = FOLDER_DEFS.map(def=>`
+      <div style="background:#f9fbff;border:1px solid #dde6f0;border-left:4px solid ${def.color};padding:16px 18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="width:32px;height:32px;border-radius:6px;background:${def.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${def.color}" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          </div>
+          <span style="font-family:Montserrat,sans-serif;font-size:0.78rem;font-weight:700;color:#111;">${def.label}</span>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <input type="url" id="ov_${def.key}" value="${overrides[def.key]||''}" placeholder="Override Drive link for this client…"
+            style="flex:1;border:1px solid #d0d0d0;border-radius:30px;background:#fff;color:#111;padding:8px 14px;font-family:Montserrat,sans-serif;font-size:0.75rem;outline:none;">
+        </div>
+      </div>`).join('');
+  }
+
+  function saveOverrides() {
+    const email=document.getElementById('overrideSel').value;
+    if (!email) return;
+    const c=gc();
+    if (!c[email]) return;
+    const overrides={};
+    FOLDER_DEFS.forEach(def => {
+      const val=document.getElementById('ov_'+def.key);
+      if (val && val.value.trim()) overrides[def.key]=val.value.trim();
+    });
+    c[email].folderOverrides=overrides; sc(c);
+    toast('Folder overrides saved for client.');
+  }
+
+  // Called when upload panel is shown
+  function initUploadPanel() {
+    renderFolderStatuses();
+    populateOverrideSel();
+  }
+
+  // ── ASSIGN / FOLDER PREVIEW ─────────────────────────────────
+  function populateAssignSel() {
+    const c=gc(), sel=document.getElementById('assignSel'), cur=sel.value;
+    sel.innerHTML='<option value="">— Choose a client —</option>';
+    Object.values(c).forEach(x => {
+      const o=document.createElement('option');
+      o.value=x.email; o.textContent=(x.name?x.name+' — ':'')+x.email;
+      sel.appendChild(o);
+    });
+    if (cur) sel.value=cur;
+  }
+
+  function renderAssign() {
+    const email=document.getElementById('assignSel').value;
+    const area=document.getElementById('assignArea');
+    if (!email) { area.style.display='none'; return; }
+    area.style.display='block';
+    const c=gc(), folders=gf();
+    const client=c[email], overrides=(client&&client.folderOverrides)||{};
+    const preview=document.getElementById('clientFolderPreview');
+
+    preview.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;">' +
+      FOLDER_DEFS.map(def => {
+        const url = overrides[def.key] || (folders[def.key]&&folders[def.key].url) || '';
+        const isOverride = !!overrides[def.key];
+        const status = url
+          ? `<a href="${url}" target="_blank" style="display:inline-flex;align-items:center;gap:5px;font-family:Montserrat,sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:${def.color};text-decoration:none;border:1px solid ${def.color}33;border-radius:30px;padding:5px 12px;margin-top:8px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Open Folder</a>`
+          : `<span style="font-family:Montserrat,sans-serif;font-size:0.7rem;color:#bbb;margin-top:8px;display:block;">Not linked</span>`;
+        return `<div style="background:#fff;border:1px solid #e8ecf4;border-left:4px solid ${def.color};padding:16px 18px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+            <div style="width:30px;height:30px;border-radius:5px;background:${def.bg};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${def.color}" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+            </div>
+            <span style="font-family:Montserrat,sans-serif;font-size:0.78rem;font-weight:700;color:#111;">${def.label}</span>
+            ${isOverride ? '<span style="font-family:Montserrat,sans-serif;font-size:0.58rem;background:'+def.bg+';color:'+def.color+';padding:2px 8px;border-radius:30px;font-weight:700;">CLIENT-SPECIFIC</span>' : ''}
+          </div>
+          ${status}
+        </div>`;
+      }).join('') + '</div>';
+  }
+
+  // ── HELPERS ─────────────────────────────────────────────────
+  function fmtSize(b) {
+    if (!b) return '';
+    if (b<1024) return b+' B';
+    if (b<1048576) return (b/1024).toFixed(1)+' KB';
+    return (b/1048576).toFixed(1)+' MB';
+  }
+  function toast(msg, err) {
+    const t=document.getElementById('toast');
+    t.innerHTML=(err
+      ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
+      : '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>')+msg;
+    t.className='toast'+(err?' err':'')+' show';
+    setTimeout(()=>t.classList.remove('show'), 3400);
+  }
+
+  // Drag & drop on upload zone
+  const uz = document.getElementById('upZone');
+  uz.addEventListener('dragover', e=>{e.preventDefault();uz.classList.add('hover');});
+  uz.addEventListener('dragleave',()=>uz.classList.remove('hover'));
+  uz.addEventListener('drop',e=>{e.preventDefault();uz.classList.remove('hover');stageFiles(e.dataTransfer.files);});
+</script>
+</body>
+</html>
