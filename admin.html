@@ -74,8 +74,10 @@
     .sb-foot { padding: 14px 16px; border-top: 1px solid rgba(255,255,255,0.06); }
     .sb-who { font-family: Montserrat, sans-serif; font-size: 0.9rem; color: rgba(255,255,255,0.3); margin-bottom: 10px; }
     .sb-who strong { display: block; color: #adcce9; font-size: 0.95rem; margin-bottom: 2px; }
-    .btn-sb-out { width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.12); border-radius: 30px; color: rgba(255,255,255,0.35); padding: 8px; font-family: Montserrat, sans-serif; font-size: 1.05rem; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all .2s; }
-    .btn-sb-out:hover { border-color: #adcce9; color: #adcce9; }
+    .btn-sb-out { width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.12); border-radius: 30px; color: rgba(255,255,255,0.35); padding: 10px; font-family: Montserrat, sans-serif; font-size: 1.05rem; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all .2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+    .btn-sb-out:hover { border-color: #e88; color: #e88; }
+    .btn-sb-home { width: 100%; background: #478ac9; border: none; border-radius: 30px; color: #fff; padding: 10px; font-family: Montserrat, sans-serif; font-size: 1.05rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all .2s; display:flex; align-items:center; justify-content:center; gap:8px; text-decoration:none; margin-bottom:8px; }
+    .btn-sb-home:hover { background: #5d9ad2; }
 
     /* CONTENT */
     .content { margin-left: 268px; display: flex; flex-direction: column; min-height: 100vh; background: #f2f2f2; }
@@ -276,7 +278,14 @@
         <div style="font-family:Montserrat,sans-serif;font-size:0.6rem;color:rgba(255,255,255,0.2);letter-spacing:1px;text-transform:uppercase;">Secured Portal</div>
       </div>
       <div class="sb-who"><strong>Administrator</strong>Arshana Shyamkishore &amp; Assoc.</div>
-      <button class="btn-sb-out" onclick="adminLogout()">Sign Out</button>
+      <a href="index.html" target="_blank" class="btn-sb-home">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+        View Home
+      </a>
+      <button class="btn-sb-out" onclick="adminLogout()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
     </div>
   </aside>
 

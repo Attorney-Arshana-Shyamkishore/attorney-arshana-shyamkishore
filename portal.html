@@ -29,13 +29,21 @@
       border: 1px solid rgba(71,138,201,0.3); border-radius: 30px;
       padding: 6px 14px; display: flex; align-items: center; gap: 7px;
     }
+    .btn-home {
+      font-family: Montserrat, sans-serif; font-size: 0.82rem; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      background: #478ac9; border: 2px solid #478ac9; border-radius: 30px;
+      color: #fff; padding: 10px 20px; cursor: pointer; transition: all .2s;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-home:hover { background: #5d9ad2; border-color: #5d9ad2; }
     .btn-signout {
       font-family: Montserrat, sans-serif; font-size: 0.82rem; font-weight: 700;
       letter-spacing: 1px; text-transform: uppercase;
-      background: transparent; border: 1px solid rgba(255,255,255,0.2); border-radius: 30px;
-      color: rgba(255,255,255,0.4); padding: 7px 16px; cursor: pointer; transition: all .2s;
+      background: transparent; border: 2px solid rgba(255,255,255,0.3); border-radius: 30px;
+      color: rgba(255,255,255,0.6); padding: 10px 20px; cursor: pointer; transition: all .2s;
     }
-    .btn-signout:hover { border-color: #adcce9; color: #adcce9; }
+    .btn-signout:hover { border-color: #e88; color: #e88; }
 
     /* Hero — same image shading pattern as index */
     .portal-hero {
@@ -121,6 +129,59 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* Coming soon folder card */
+    .folder-coming-soon {
+      cursor: default;
+      background: #fafafa !important;
+    }
+    .folder-coming-soon:hover {
+      box-shadow: none !important;
+      transform: none !important;
+    }
+    .coming-soon-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: #f0f4f8; border: 1px solid #dde6f0; border-radius: 30px;
+      padding: 7px 16px; font-family: Montserrat, sans-serif;
+      font-size: 0.75rem; font-weight: 600; color: #aaa;
+      margin-top: 4px;
+    }
+    .coming-soon-badge svg { color: #aaa; }
+
+    /* Preparing message banner */
+    .portal-preparing-msg {
+      margin-top: 28px;
+      background: linear-gradient(135deg, #e8f1fa 0%, #f0f7ff 100%);
+      border: 1px solid #adcce9; border-left: 5px solid #478ac9;
+      padding: 28px 32px;
+    }
+    .ppm-inner { display: flex; align-items: flex-start; gap: 20px; }
+    .ppm-icon {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(71,138,201,0.12); border: 2px solid rgba(71,138,201,0.25);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .ppm-text h4 {
+      font-family: Montserrat, sans-serif; font-size: 1.1rem;
+      font-weight: 800; color: #111; margin-bottom: 10px;
+    }
+    .ppm-text p {
+      font-family: Montserrat, sans-serif; font-size: 0.88rem;
+      color: #555; line-height: 1.8; margin-bottom: 16px;
+    }
+    .ppm-contact {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: Montserrat, sans-serif; font-size: 0.82rem;
+      font-weight: 600; color: #478ac9; text-decoration: none;
+      margin-right: 20px; margin-bottom: 6px;
+      transition: color .2s;
+    }
+    .ppm-contact:hover { color: #2d6a9f; }
+    @media (max-width: 600px) {
+      .ppm-inner { flex-direction: column; }
+      .ppm-icon { margin: 0 auto; }
+      .ppm-text h4 { text-align: center; }
+    }
+
     /* Empty state */
     .empty-state {
       text-align: center; padding: 72px 24px;
@@ -155,7 +216,14 @@
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/></svg>
         <span id="clientDisplay">Loading…</span>
       </div>
-      <button class="btn-signout" onclick="doSignOut()">Sign Out</button>
+      <a href="index.html" class="btn-home">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+        Home
+      </a>
+      <button class="btn-signout" onclick="doSignOut()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
     </div>
   </nav>
 
@@ -207,7 +275,8 @@
     document.getElementById('welcomeH').textContent = 'Welcome, ' + (clientName || clientEmail);
 
     function doSignOut() {
-      sessionStorage.clear();
+      // Always works — clears session and goes to login regardless of loading state
+      try { sessionStorage.clear(); } catch(e) {}
       window.location.href = 'login.html';
     }
 
@@ -293,40 +362,66 @@
         list.innerHTML = '<div class="empty-state"><h3>Connection Error</h3><p>Could not load documents. Please check your internet connection or contact our office.</p></div>';
         return;
       }
-      const list = document.getElementById('docsList');
 
-      const anyLinked = FOLDER_DEFS.some(def => {
-        return overrides[def.key] || (folders[def.key] && folders[def.key].url);
-      });
+      const anyLinked = FOLDER_DEFS.some(def =>
+        overrides[def.key] || (folders[def.key] && folders[def.key].url)
+      );
 
-      if (!anyLinked) {
-        list.innerHTML = `<div class="empty-state">
-          <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
-          <h3>No Folders Available Yet</h3>
-          <p>Your attorney is preparing your documents.<br>Please contact our office: <a href="tel:0314644940" style="color:#478ac9">031 464 4940</a></p>
-        </div>`;
-        return;
-      }
-
+      // Build the folder cards — show all 4, linked ones are clickable, unlinked show coming soon
       list.innerHTML = '<div class="folders-grid">' + FOLDER_DEFS.map(def => {
         const url = overrides[def.key] || (folders[def.key] && folders[def.key].url) || '';
-        const locked = !url;
-        return `<a href="${url || '#'}" target="${url ? '_blank' : '_self'}" rel="noopener noreferrer"
-            class="folder-card${locked ? ' locked' : ''}"
-            style="--fc:${def.color};--fi:${def.bg};"
-            ${!url ? 'onclick="return false;"' : ''}>
-          <div class="folder-card-icon">${def.icon}</div>
-          <h3>${def.label}</h3>
-          <p>${def.desc}</p>
-          <span class="folder-card-btn">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
-              <polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/>
-            </svg>
-            ${locked ? 'Not Available' : 'Open in Drive'}
-          </span>
-        </a>`;
-      }).join('') + '</div>';
+        const linked = !!url;
+
+        if (linked) {
+          // Fully active card — clickable
+          return `<a href="${url}" target="_blank" rel="noopener noreferrer"
+              class="folder-card" style="--fc:${def.color};--fi:${def.bg};">
+            <div class="folder-card-icon">${def.icon}</div>
+            <h3>${def.label}</h3>
+            <p>${def.desc}</p>
+            <span class="folder-card-btn">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/>
+                <polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+              Open in Drive
+            </span>
+          </a>`;
+        } else {
+          // Coming soon card — warm, friendly, not an error
+          return `<div class="folder-card folder-coming-soon" style="--fc:${def.color};--fi:${def.bg};">
+            <div class="folder-card-icon" style="opacity:0.5;">${def.icon}</div>
+            <h3 style="color:#aaa;">${def.label}</h3>
+            <p style="color:#bbb;">${def.desc}</p>
+            <div class="coming-soon-badge">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+              Being prepared for you
+            </div>
+          </div>`;
+        }
+      }).join('') + '</div>' + (!anyLinked ? `
+        <div class="portal-preparing-msg">
+          <div class="ppm-inner">
+            <div class="ppm-icon">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#478ac9" stroke-width="1.5">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <polyline points="9,12 11,14 15,10"/>
+              </svg>
+            </div>
+            <div class="ppm-text">
+              <h4>Your matter is in good hands</h4>
+              <p>Our legal team is actively working on your case. Documents will appear here as soon as they are ready. You will be notified when files become available.</p>
+              <a href="mailto:arshanasnlaw@gmail.com" class="ppm-contact">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+                arshanasnlaw@gmail.com
+              </a>
+              <a href="tel:0314644940" class="ppm-contact">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.03 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+                031 464 4940
+              </a>
+            </div>
+          </div>
+        </div>` : '');
     }
 
     renderDocs();
