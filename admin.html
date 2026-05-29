@@ -218,9 +218,7 @@
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 
 <!-- SCRIPT URL WARNING BANNER -->
-<div id="urlBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:8888;background:#c0392b;color:#fff;font-family:Montserrat,sans-serif;font-size:0.9rem;font-weight:700;text-align:center;padding:12px 24px;letter-spacing:0.5px;">
-  ⚠ Apps Script URL not set — open admin.html and replace https://script.google.com/macros/s/AKfycbxpjJV_QBnzBjdde1oHYRNIS-zIT1FvJnXZqUccfjylfmNEkQ0TPACTxRVRCQolxo3v/exec with your deployed URL
-</div>
+<div id="urlBanner" style="display:none;"></div>
 
 <div class="app-wrap">
 
@@ -1027,10 +1025,7 @@
     toast('Backup imported successfully — Google Sheet updated.');
   }
 
-  // Show URL banner if not configured
-  if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbxpjJV_QBnzBjdde1oHYRNIS-zIT1FvJnXZqUccfjylfmNEkQ0TPACTxRVRCQolxo3v/exec') {
-    document.getElementById('urlBanner').style.display = 'block';
-  }
+  // URL is configured — banner hidden
 
   // ── Drag & drop on upload zone
   const uz = document.getElementById('upZone');
