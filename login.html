@@ -366,9 +366,8 @@
 </div>
 
 <script>
-  function getClients() {
-    try { return JSON.parse(localStorage.getItem('asa_clients') || '{}'); } catch(e) { return {}; }
-  }
+  // Paste your deployed Apps Script Web App URL below
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxpjJV_QBnzBjdde1oHYRNIS-zIT1FvJnXZqUccfjylfmNEkQ0TPACTxRVRCQolxo3v/exec';
 
   function togglePw(id, btn) {
     const inp = document.getElementById(id);
@@ -387,7 +386,7 @@
     if (e.target === this) closeForgot();
   });
 
-  function doLogin() {
+  async function doLogin() {
     const email = document.getElementById('loginEmail').value.trim().toLowerCase();
     const pass  = document.getElementById('loginPass').value;
     const err   = document.getElementById('errorMsg');
@@ -399,11 +398,13 @@
     }
     btn.disabled = true;
     btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>&nbsp;Verifying…';
-    setTimeout(() => {
-      const c = getClients();
-      if (c[email] && c[email].password === pass) {
+    try {
+      const res  = await fetch(SCRIPT_URL, { method:'POST', body:JSON.stringify({ action:'authClient', email, password:pass }) });
+      const data = await res.json();
+      if (data.success) {
         sessionStorage.setItem('asa_client_email', email);
-        sessionStorage.setItem('asa_client_name', c[email].name || email);
+        sessionStorage.setItem('asa_client_name', data.name || email);
+        sessionStorage.setItem('asa_folder_overrides', JSON.stringify(data.folderOverrides || {}));
         window.location.href = 'portal.html';
       } else {
         err.textContent = 'Invalid email or password. Please contact our office for assistance.';
@@ -411,7 +412,12 @@
         btn.disabled = false;
         btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Access My Documents';
       }
-    }, 700);
+    } catch(e) {
+      err.textContent = 'Connection error. Please try again or contact our office.';
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Access My Documents';
+    }
   }
   document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 </script>

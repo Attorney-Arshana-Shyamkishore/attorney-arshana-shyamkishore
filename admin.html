@@ -209,6 +209,19 @@
 
 <!-- ══ ADMIN APP ════════════════════════════════════════════ -->
 <div id="adminApp">
+
+<!-- DB LOADING OVERLAY -->
+<div id="dbOverlay" style="display:none;position:fixed;inset:0;background:rgba(10,22,40,0.75);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+  <div style="width:48px;height:48px;border:4px solid rgba(71,138,201,0.3);border-top-color:#478ac9;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+  <div style="font-family:Montserrat,sans-serif;font-size:1rem;color:#adcce9;font-weight:600;letter-spacing:1px;">Connecting to database…</div>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+<!-- SCRIPT URL WARNING BANNER -->
+<div id="urlBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:8888;background:#c0392b;color:#fff;font-family:Montserrat,sans-serif;font-size:0.9rem;font-weight:700;text-align:center;padding:12px 24px;letter-spacing:0.5px;">
+  ⚠ Apps Script URL not set — open admin.html and replace https://script.google.com/macros/s/AKfycbxpjJV_QBnzBjdde1oHYRNIS-zIT1FvJnXZqUccfjylfmNEkQ0TPACTxRVRCQolxo3v/exec with your deployed URL
+</div>
+
 <div class="app-wrap">
 
   <!-- SIDEBAR -->
@@ -247,6 +260,16 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
         View Website
       </div>
+      <div class="sb-sec">Backup</div>
+      <div class="sb-item" onclick="exportBackup()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export Backup
+      </div>
+      <div class="sb-item" onclick="document.getElementById('importFile').click()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Import Backup
+      </div>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importBackup(this)">
     </nav>
     <div class="sb-foot">
       <div style="text-align:center;margin-bottom:14px;">
@@ -622,11 +645,54 @@
     setTimeout(initAdmin, 50);
   }
 
-  // ── DATA ────────────────────────────────────────────────────
-  function gc() { try { return JSON.parse(localStorage.getItem('asa_clients')||'{}'); } catch(e){return{};} }
-  function sc(c) { localStorage.setItem('asa_clients', JSON.stringify(c)); }
-  function gl() { try { return JSON.parse(localStorage.getItem('asa_library')||'[]'); } catch(e){return[];} }
-  function sl(l) { localStorage.setItem('asa_library', JSON.stringify(l)); }
+  // ── GOOGLE SHEETS DATABASE ──────────────────────────────────
+  // Paste your deployed Apps Script Web App URL below
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxpjJV_QBnzBjdde1oHYRNIS-zIT1FvJnXZqUccfjylfmNEkQ0TPACTxRVRCQolxo3v/exec';
+
+  // In-memory cache so the UI stays fast
+  let _clients = {};
+  let _folders = {};
+  let _dbReady = false;
+
+  // Show/hide loading overlay
+  function dbLoading(on) {
+    document.getElementById('dbOverlay').style.display = on ? 'flex' : 'none';
+  }
+
+  async function dbPost(payload) {
+    const r = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+    return r.json();
+  }
+
+  // Load everything from the Sheet on startup
+  async function loadDB() {
+    dbLoading(true);
+    try {
+      const [cr, fr] = await Promise.all([
+        dbPost({ action: 'getClients' }),
+        dbPost({ action: 'getFolders' })
+      ]);
+      _clients = cr.clients || {};
+      _folders = fr.folders || {};
+      _dbReady = true;
+    } catch(e) {
+      alert('Could not connect to the database. Check your SCRIPT_URL in admin.html and ensure the Apps Script is deployed.');
+    }
+    dbLoading(false);
+  }
+
+  // Wrappers that mirror the old localStorage API so all existing functions work unchanged
+  function gc() { return _clients; }
+  function sc(c) { _clients = c; } // local cache update; actual saves done per-operation below
+
+  function gl() { return []; }  // library no longer used
+  function sl(l) {}
+
+  function gf() { return _folders; }
+  function sf(f) { _folders = f; }
 
   // ── PANELS ──────────────────────────────────────────────────
   const ptitles = { dashboard:'Dashboard', clients:'All Clients', addClient:'Add New Client', upload:'Drive Folder Links', assign:'Assign to Clients' };
@@ -640,7 +706,10 @@
     if (id==='upload')    initUploadPanel();
     if (id==='assign')    { populateAssignSel(); renderAssign(); }
   }
-  function initAdmin() { refreshDash(); }
+  async function initAdmin() {
+    await loadDB();
+    refreshDash();
+  }
 
   // ── DASHBOARD ───────────────────────────────────────────────
   function refreshDash() {
@@ -680,25 +749,30 @@
       </tr>`).join('');
   }
 
-  function addClient() {
+  async function addClient() {
     const name   = document.getElementById('nc_name').value.trim();
     const matter = document.getElementById('nc_matter').value.trim();
     const email  = document.getElementById('nc_email').value.trim().toLowerCase();
     const pass   = document.getElementById('nc_pass').value;
     const notes  = document.getElementById('nc_notes').value.trim();
     if (!email||!pass) { toast('Email and password are required.',true); return; }
-    const c = gc();
-    if (c[email]) { toast('A client with this email already exists.',true); return; }
-    c[email] = { name, matter, email, password:pass, notes, documents:[], addedAt:Date.now() };
-    sc(c);
+    dbLoading(true);
+    const res = await dbPost({ action:'saveClient', client:{ name, matter, email, password:pass, notes, folderOverrides:{} } });
+    dbLoading(false);
+    if (res.error) { toast(res.error, true); return; }
+    _clients[email] = { name, matter, email, password:pass, notes, folderOverrides:{}, addedAt:Date.now() };
     ['nc_name','nc_matter','nc_email','nc_pass','nc_notes'].forEach(id => document.getElementById(id).value='');
     toast('Client account created successfully.');
     refreshDash();
   }
 
-  function deleteClient(email) {
+  async function deleteClient(email) {
     if (!confirm('Remove client "'+email+'" and all their assigned documents? This cannot be undone.')) return;
-    const c=gc(); delete c[email]; sc(c);
+    dbLoading(true);
+    const res = await dbPost({ action:'deleteClient', email });
+    dbLoading(false);
+    if (res.error) { toast(res.error, true); return; }
+    delete _clients[email];
     renderClients(); refreshDash();
     toast('Client removed.');
   }
@@ -717,19 +791,23 @@
     document.getElementById('editModal').classList.add('open');
   }
   function closeModal() { document.getElementById('editModal').classList.remove('open'); }
-  function saveEdit() {
+  async function saveEdit() {
     const pass   = document.getElementById('editPass').value;
     const name   = document.getElementById('editName').value.trim();
     const matter = document.getElementById('editMatter').value.trim();
     const notes  = document.getElementById('editNotes').value.trim();
     if (!pass) { toast('Password cannot be empty.',true); return; }
-    const c=gc();
-    if (!c[_editEmail]) return;
-    c[_editEmail].password = pass;
-    c[_editEmail].name   = name   || c[_editEmail].name;
-    c[_editEmail].matter = matter || c[_editEmail].matter;
-    c[_editEmail].notes  = notes;
-    sc(c); closeModal(); renderClients(); refreshDash();
+    dbLoading(true);
+    const res = await dbPost({ action:'updateClient', client:{ email:_editEmail, password:pass, name, matter, notes } });
+    dbLoading(false);
+    if (res.error) { toast(res.error, true); return; }
+    if (_clients[_editEmail]) {
+      _clients[_editEmail].password = pass;
+      _clients[_editEmail].name   = name   || _clients[_editEmail].name;
+      _clients[_editEmail].matter = matter || _clients[_editEmail].matter;
+      _clients[_editEmail].notes  = notes;
+    }
+    closeModal(); renderClients(); refreshDash();
     toast('Client updated successfully.');
   }
   document.getElementById('editModal').addEventListener('click', function(e) { if(e.target===this) closeModal(); });
@@ -742,8 +820,7 @@
     { key:'accounts',     label:'Accounts',                    color:'#6a3d9a', bg:'#ede1f7' }
   ];
 
-  function gf() { try { return JSON.parse(localStorage.getItem('asa_folders')||'{}'); } catch(e){return{};} }
-  function sf(f) { localStorage.setItem('asa_folders', JSON.stringify(f)); }
+
 
   // Convert any Google Drive share URL to a clean openable link
   function cleanDriveUrl(url) {
@@ -753,16 +830,18 @@
     return url.trim();
   }
 
-  function saveFolder(key) {
+  async function saveFolder(key) {
     const input = document.getElementById('fl_'+key);
     const url = input.value.trim();
     if (!url) { toast('Please paste a Google Drive link first.', true); return; }
     if (!url.includes('drive.google.com') && !url.includes('docs.google.com')) {
       toast('That does not look like a Google Drive link.', true); return;
     }
-    const folders = gf();
-    folders[key] = { url: cleanDriveUrl(url), savedAt: Date.now() };
-    sf(folders);
+    _folders[key] = { url: cleanDriveUrl(url), savedAt: Date.now() };
+    dbLoading(true);
+    const res = await dbPost({ action:'saveFolders', folders:_folders });
+    dbLoading(false);
+    if (res.error) { toast('Could not save folder: '+res.error, true); return; }
     renderFolderStatuses();
     toast('Folder link saved for ' + FOLDER_DEFS.find(f=>f.key===key).label + '.');
   }
@@ -820,17 +899,19 @@
       </div>`).join('');
   }
 
-  function saveOverrides() {
+  async function saveOverrides() {
     const email=document.getElementById('overrideSel').value;
     if (!email) return;
-    const c=gc();
-    if (!c[email]) return;
     const overrides={};
     FOLDER_DEFS.forEach(def => {
       const val=document.getElementById('ov_'+def.key);
       if (val && val.value.trim()) overrides[def.key]=val.value.trim();
     });
-    c[email].folderOverrides=overrides; sc(c);
+    dbLoading(true);
+    const res = await dbPost({ action:'saveOverride', email, overrides });
+    dbLoading(false);
+    if (res.error) { toast('Could not save: '+res.error, true); return; }
+    if (_clients[email]) _clients[email].folderOverrides = overrides;
     toast('Folder overrides saved for client.');
   }
 
@@ -897,7 +978,61 @@
     setTimeout(()=>t.classList.remove('show'), 3400);
   }
 
-  // Drag & drop on upload zone
+  // ── EXPORT / IMPORT BACKUP ──────────────────────────────────
+  function exportBackup() {
+    const backup = {
+      clients: _clients,
+      folders: _folders,
+      exportedAt: new Date().toISOString(),
+      exportedBy: 'ASA Law Firm Admin'
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'ASA-backup-' + new Date().toISOString().slice(0,10) + '.json';
+    a.click();
+    toast('Backup downloaded successfully.');
+  }
+
+  async function importBackup(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const text = await file.text();
+    let backup;
+    try { backup = JSON.parse(text); } catch(e) { toast('Invalid backup file.', true); return; }
+    if (!backup.clients) { toast('Invalid backup file — no client data found.', true); return; }
+    if (!confirm('This will overwrite all current data in the Google Sheet with the backup. Are you sure?')) return;
+    dbLoading(true);
+    // Push each client
+    const existingRes = await dbPost({ action: 'getClients' });
+    const existing = existingRes.clients || {};
+    const promises = [];
+    for (const email in backup.clients) {
+      const c = backup.clients[email];
+      if (existing[email]) {
+        promises.push(dbPost({ action:'updateClient', client:c }));
+      } else {
+        promises.push(dbPost({ action:'saveClient', client:c }));
+      }
+    }
+    if (backup.folders) {
+      promises.push(dbPost({ action:'saveFolders', folders:backup.folders }));
+    }
+    await Promise.all(promises);
+    _clients = backup.clients;
+    _folders = backup.folders || {};
+    dbLoading(false);
+    input.value = '';
+    refreshDash();
+    toast('Backup imported successfully — Google Sheet updated.');
+  }
+
+  // Show URL banner if not configured
+  if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbxpjJV_QBnzBjdde1oHYRNIS-zIT1FvJnXZqUccfjylfmNEkQ0TPACTxRVRCQolxo3v/exec') {
+    document.getElementById('urlBanner').style.display = 'block';
+  }
+
+  // ── Drag & drop on upload zone
   const uz = document.getElementById('upZone');
   uz.addEventListener('dragover', e=>{e.preventDefault();uz.classList.add('hover');});
   uz.addEventListener('dragleave',()=>uz.classList.remove('hover'));

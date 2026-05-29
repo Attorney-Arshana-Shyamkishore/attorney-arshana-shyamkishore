@@ -119,6 +119,8 @@
     }
     .folder-card.locked .folder-card-btn { background: #aaa; }
 
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     /* Empty state */
     .empty-state {
       text-align: center; padding: 72px 24px;
@@ -268,11 +270,29 @@
       }
     ];
 
-    function renderDocs() {
-      const clients = JSON.parse(localStorage.getItem('asa_clients') || '{}');
-      const folders = JSON.parse(localStorage.getItem('asa_folders') || '{}');
-      const client  = clients[clientEmail];
-      const overrides = (client && client.folderOverrides) || {};
+    // Paste your deployed Apps Script Web App URL below
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxpjJV_QBnzBjdde1oHYRNIS-zIT1FvJnXZqUccfjylfmNEkQ0TPACTxRVRCQolxo3v/exec';
+
+    async function renderDocs() {
+      const list = document.getElementById('docsList');
+      list.innerHTML = '<div style="text-align:center;padding:60px 24px;font-family:Montserrat,sans-serif;color:#aaa;"><div style="width:40px;height:40px;border:4px solid #dde6f0;border-top-color:#478ac9;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;"></div>Loading your documents…</div>';
+
+      // Folder overrides stored in sessionStorage from login
+      const overrides = JSON.parse(sessionStorage.getItem('asa_folder_overrides') || '{}');
+
+      // Fetch main folders from Sheet
+      let folders = {};
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method:'POST',
+          body: JSON.stringify({ action:'getFolders' })
+        });
+        const data = await res.json();
+        folders = data.folders || {};
+      } catch(e) {
+        list.innerHTML = '<div class="empty-state"><h3>Connection Error</h3><p>Could not load documents. Please check your internet connection or contact our office.</p></div>';
+        return;
+      }
       const list = document.getElementById('docsList');
 
       const anyLinked = FOLDER_DEFS.some(def => {
