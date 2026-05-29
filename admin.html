@@ -351,10 +351,6 @@
             </div>
           </div>
           <div class="fg"><label>Notes (internal, optional)</label><textarea id="nc_notes" placeholder="Any internal notes about this client…"></textarea></div>
-          <div class="row2">
-            <div class="fg"><label>Client ID Number (for credential card unlock)</label><input type="text" id="nc_idnum" placeholder="e.g. 8501015800082"></div>
-            <div class="fg"><label>Fallback PIN (4–6 digits, e.g. birth year)</label><input type="text" id="nc_pin" placeholder="e.g. 1985" maxlength="6"></div>
-          </div>
           <button class="btn-primary" onclick="addClient()">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Create Client Account
@@ -596,10 +592,6 @@
     <div class="fg"><label>Full Name</label><input type="text" id="editName" placeholder="Full name"></div>
     <div class="fg"><label>Matter / Case Reference</label><input type="text" id="editMatter" placeholder="Matter reference"></div>
     <div class="fg"><label>Internal Notes</label><textarea id="editNotes" placeholder="Internal notes…"></textarea></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-      <div class="fg" style="margin:0"><label>Client ID Number</label><input type="text" id="editIdNum" placeholder="ID number"></div>
-      <div class="fg" style="margin:0"><label>Fallback PIN</label><input type="text" id="editPin" placeholder="4–6 digit PIN" maxlength="6"></div>
-    </div>
     <div class="modal-btns">
       <button class="btn-primary" onclick="saveEdit()">Save Changes</button>
       <button class="btn-danger" onclick="closeModal()">Cancel</button>
@@ -758,10 +750,6 @@
         <td>
           <div class="tbl-actions">
             <button class="btn-warn btn-sm" onclick="openEdit('${x.email}')">Edit</button>
-            <button class="btn-primary btn-sm" onclick="genCard('${x.email}')">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
-              Credential Card
-            </button>
             <button class="btn-danger btn-sm" onclick="deleteClient('${x.email}')">Remove</button>
           </div>
         </td>
@@ -775,13 +763,11 @@
     const pass   = document.getElementById('nc_pass').value;
     const notes  = document.getElementById('nc_notes').value.trim();
     if (!email||!pass) { toast('Email and password are required.',true); return; }
-    const idNum = document.getElementById('nc_idnum').value.trim().replace(/\s/g,'');
-    const pin   = document.getElementById('nc_pin').value.trim();
     dbLoading(true);
-    const res = await dbPost({ action:'saveClient', client:{ name, matter, email, password:pass, notes, idNum, pin, folderOverrides:{} } });
+    const res = await dbPost({ action:'saveClient', client:{ name, matter, email, password:pass, notes, folderOverrides:{} } });
     dbLoading(false);
     if (res.error) { toast(res.error, true); return; }
-    _clients[email] = { name, matter, email, password:pass, notes, idNum, pin, folderOverrides:{}, addedAt:Date.now() };
+    _clients[email] = { name, matter, email, password:pass, notes, folderOverrides:{}, addedAt:Date.now() };
     ['nc_name','nc_matter','nc_email','nc_pass','nc_notes'].forEach(id => document.getElementById(id).value='');
     toast('Client account created successfully.');
     refreshDash();
@@ -809,8 +795,7 @@
     document.getElementById('editName').value   = x.name||'';
     document.getElementById('editMatter').value = x.matter||'';
     document.getElementById('editNotes').value  = x.notes||'';
-    document.getElementById('editIdNum').value  = x.idNum||'';
-    document.getElementById('editPin').value    = x.pin||'';
+
     document.getElementById('editModal').classList.add('open');
   }
   function closeModal() { document.getElementById('editModal').classList.remove('open'); }
@@ -821,9 +806,7 @@
     const notes  = document.getElementById('editNotes').value.trim();
     if (!pass) { toast('Password cannot be empty.',true); return; }
     dbLoading(true);
-    const idNum = document.getElementById('editIdNum').value.trim().replace(/\s/g,'');
-    const pin   = document.getElementById('editPin').value.trim();
-    const res = await dbPost({ action:'updateClient', client:{ email:_editEmail, password:pass, name, matter, notes, idNum, pin } });
+    const res = await dbPost({ action:'updateClient', client:{ email:_editEmail, password:pass, name, matter, notes } });
     dbLoading(false);
     if (res.error) { toast(res.error, true); return; }
     if (_clients[_editEmail]) {
@@ -831,8 +814,7 @@
       _clients[_editEmail].name   = name   || _clients[_editEmail].name;
       _clients[_editEmail].matter = matter || _clients[_editEmail].matter;
       _clients[_editEmail].notes  = notes;
-      if (idNum) _clients[_editEmail].idNum = idNum;
-      if (pin)   _clients[_editEmail].pin   = pin;
+
     }
     closeModal(); renderClients(); refreshDash();
     toast('Client updated successfully.');
@@ -1005,543 +987,8 @@
     setTimeout(()=>t.classList.remove('show'), 3400);
   }
 
-  // ── CREDENTIAL CARD GENERATOR ────────────────────────────────
-  function genCard(email) {
-    const c = _clients[email];
-    if (!c) return;
-    if (!c.idNum && !c.pin) {
-      toast('Add an ID number or PIN for this client first via Edit.', true);
-      return;
-    }
 
-    // Encode credentials — simple reversible encoding, unlocked client-side by ID/PIN
-    function encodeData(str) { return btoa(unescape(encodeURIComponent(str))); }
-    function makeKey(str)    { return encodeData(str).split('').reverse().join(''); }
-
-    const idKey   = c.idNum ? makeKey(c.idNum.replace(/\s/g,'')) : null;
-    const pinKey  = c.pin   ? makeKey(c.pin.replace(/\s/g,''))   : null;
-    const payload = encodeData(JSON.stringify({ e: c.email, p: c.password, n: c.name || '' }));
-    const siteUrl = (window.location.origin +
-                     window.location.pathname.replace('admin.html','') +
-                     'login.html');
-    const clientName = c.name || c.email;
-
-    const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Secure Credentials — Arshana Shyamkishore &amp; Associates</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: Montserrat, sans-serif;
-    background: #0a1628;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* Subtle background pattern */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.06) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 20%, rgba(71,138,201,0.06) 0%, transparent 50%);
-    pointer-events: none;
-  }
-
-  /* ── ENVELOPE WRAPPER ── */
-  .envelope-wrap {
-    width: 100%;
-    max-width: 460px;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* Firm name above card */
-  .firm-above {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  .firm-above img {
-    height: 48px;
-    object-fit: contain;
-    opacity: 0.9;
-    display: block;
-    margin: 0 auto 10px;
-  }
-  .firm-above .firm-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1rem;
-    font-weight: 600;
-    color: rgba(255,255,255,0.7);
-    letter-spacing: 1px;
-  }
-  .firm-above .firm-sub {
-    font-size: 0.6rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #c9a84c;
-    margin-top: 3px;
-  }
-
-  /* ── CARD ── */
-  .card {
-    background: #ffffff;
-    border-radius: 2px;
-    overflow: hidden;
-    box-shadow:
-      0 2px 4px rgba(0,0,0,0.08),
-      0 8px 24px rgba(0,0,0,0.25),
-      0 32px 64px rgba(0,0,0,0.35);
-  }
-
-  /* Gold top accent line */
-  .card-accent { height: 4px; background: linear-gradient(90deg, #c9a84c, #e8c97a, #c9a84c); }
-
-  /* ── LOCKED STATE ── */
-  .locked-section { padding: 40px 40px 36px; }
-
-  .envelope-icon {
-    width: 80px;
-    height: 80px;
-    background: #f0f7ff;
-    border: 2px solid #adcce9;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 24px;
-    transition: all 0.3s ease;
-  }
-  .envelope-icon svg { color: #478ac9; }
-
-  .locked-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.7rem;
-    font-weight: 700;
-    color: #0a1628;
-    text-align: center;
-    margin-bottom: 6px;
-  }
-  .locked-sub {
-    font-size: 0.78rem;
-    color: #888;
-    text-align: center;
-    line-height: 1.7;
-    margin-bottom: 8px;
-  }
-  .client-name-badge {
-    display: block;
-    text-align: center;
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1rem;
-    font-style: italic;
-    color: #478ac9;
-    margin-bottom: 28px;
-  }
-
-  .divider {
-    width: 48px;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #c9a84c, transparent);
-    margin: 0 auto 28px;
-  }
-
-  /* Input label */
-  .field-label {
-    display: block;
-    font-size: 0.62rem;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    color: #478ac9;
-    font-weight: 700;
-    margin-bottom: 10px;
-  }
-
-  /* Input field */
-  .pin-input {
-    width: 100%;
-    border: 2px solid #e0e0e0;
-    border-radius: 4px;
-    padding: 16px 20px;
-    font-family: Montserrat, sans-serif;
-    font-size: 1.1rem;
-    font-weight: 600;
-    text-align: center;
-    letter-spacing: 4px;
-    color: #0a1628;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    background: #fafafa;
-  }
-  .pin-input:focus {
-    border-color: #478ac9;
-    box-shadow: 0 0 0 3px rgba(71,138,201,0.12);
-    background: #fff;
-  }
-  .pin-input.error-state { border-color: #c0392b; box-shadow: 0 0 0 3px rgba(192,57,43,0.1); }
-
-  /* Error message */
-  .error-msg {
-    background: #fdf0ef;
-    border-left: 3px solid #c0392b;
-    color: #c0392b;
-    padding: 10px 14px;
-    font-size: 0.78rem;
-    margin-top: 12px;
-    display: none;
-    line-height: 1.5;
-  }
-
-  /* Unlock button */
-  .btn-unlock {
-    width: 100%;
-    background: #0a1628;
-    color: #c9a84c;
-    border: 2px solid #c9a84c;
-    padding: 15px;
-    font-family: Montserrat, sans-serif;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    cursor: pointer;
-    margin-top: 16px;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    border-radius: 2px;
-  }
-  .btn-unlock:hover { background: #c9a84c; color: #0a1628; }
-
-  /* Fallback */
-  .fallback-link {
-    display: block;
-    text-align: center;
-    margin-top: 16px;
-    font-size: 0.72rem;
-    color: #bbb;
-    cursor: pointer;
-    transition: color 0.2s;
-  }
-  .fallback-link:hover { color: #478ac9; }
-
-  /* ── REVEALED STATE ── */
-  .revealed-section { display: none; }
-
-  .reveal-banner {
-    background: linear-gradient(135deg, #0a1628, #1a2e4a);
-    padding: 28px 40px;
-    border-bottom: 3px solid #c9a84c;
-    position: relative;
-    overflow: hidden;
-  }
-  .reveal-banner::after {
-    content: '';
-    position: absolute;
-    right: -20px; top: -20px;
-    width: 120px; height: 120px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(201,168,76,0.1), transparent 70%);
-  }
-  .reveal-eyebrow {
-    font-size: 0.6rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #adcce9;
-    margin-bottom: 6px;
-  }
-  .reveal-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #ffffff;
-  }
-
-  .creds-body { padding: 28px 40px 24px; }
-
-  /* Credential row */
-  .cred-row {
-    border: 1px solid #e8ecf2;
-    border-left: 4px solid #478ac9;
-    padding: 16px 20px;
-    margin-bottom: 14px;
-    position: relative;
-  }
-  .cred-row.gold { border-left-color: #c9a84c; }
-  .cred-row-label {
-    font-size: 0.58rem;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    color: #478ac9;
-    font-weight: 700;
-    margin-bottom: 6px;
-  }
-  .cred-row.gold .cred-row-label { color: #c9a84c; }
-  .cred-value {
-    font-family: 'Courier New', monospace;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #0a1628;
-    word-break: break-all;
-    letter-spacing: 0.5px;
-  }
-  .copy-btn {
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: 1px solid #e0e0e0;
-    border-radius: 30px;
-    padding: 5px 14px;
-    font-family: Montserrat, sans-serif;
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: #999;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  .copy-btn:hover { border-color: #478ac9; color: #478ac9; }
-  .copy-btn.copied { border-color: #27ae60; color: #27ae60; }
-
-  /* Portal button */
-  .portal-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background: #478ac9;
-    color: #fff;
-    text-decoration: none;
-    padding: 15px;
-    font-family: Montserrat, sans-serif;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin: 4px 40px 28px;
-    transition: background 0.2s;
-    border-radius: 2px;
-  }
-  .portal-btn:hover { background: #5d9ad2; }
-
-  /* Security note */
-  .security-note {
-    margin: 0 40px 24px;
-    background: #f7f9fc;
-    border: 1px solid #dde6f0;
-    padding: 14px 16px;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  .security-note svg { color: #27ae60; flex-shrink: 0; margin-top: 1px; }
-  .security-note p { font-size: 0.72rem; color: #777; line-height: 1.6; }
-
-  /* KTech bar */
-  .ktech-bar {
-    background: #050d1a;
-    padding: 14px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .ktech-bar span { font-size: 0.6rem; color: rgba(255,255,255,0.2); letter-spacing: 0.5px; }
-  .ktech-bar strong { color: #c9a84c; }
-
-  /* Animations */
-  @keyframes fadeSlideUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .anim { animation: fadeSlideUp 0.5s ease forwards; }
-  .anim-delay { animation: fadeSlideUp 0.5s ease 0.15s both; }
-  .anim-delay2 { animation: fadeSlideUp 0.5s ease 0.3s both; }
-</style>
-</head>
-<body>
-
-<div class="envelope-wrap">
-
-  <!-- Firm branding above card -->
-  <div class="firm-above">
-    <img src="https://attorney-arshana-shyamkishore.github.io/attorney-arshana-shyamkishore/images/1663533747_151635_fs-removebg-preview.png" alt="ASA">
-    <div class="firm-name">Arshana Shyamkishore &amp; Associates</div>
-    <div class="firm-sub">Attorneys &amp; Legal Consultants</div>
-  </div>
-
-  <div class="card">
-    <div class="card-accent"></div>
-
-    <!-- LOCKED SECTION -->
-    <div class="locked-section" id="lockSection">
-      <div class="envelope-icon" id="envIcon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-          <polyline points="22,6 12,13 2,6"/>
-        </svg>
-      </div>
-
-      <h1 class="locked-title">Secure Credentials</h1>
-      <span class="client-name-badge">Prepared for ${clientName}</span>
-      <p class="locked-sub">This envelope contains your private portal login credentials.<br>Enter your unlock code to open it.</p>
-      <div class="divider"></div>
-
-      <label class="field-label" id="fieldLabel">ID Number / Access Code</label>
-      <input type="tel" class="pin-input" id="pinInput"
-             placeholder="· · · · · · · · · · · ·"
-             inputmode="numeric" maxlength="20"
-             autocomplete="off">
-      <div class="error-msg" id="errMsg">
-        Incorrect code. Please check and try again.
-      </div>
-
-      <button class="btn-unlock" onclick="tryUnlock()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <rect x="3" y="11" width="18" height="11" rx="2"/>
-          <path d="M7 11V7a5 5 0 0110 0v4"/>
-        </svg>
-        Open Envelope
-      </button>
-
-      <span class="fallback-link" id="fallbackLink" onclick="useFallback()"
-            style="display:${pinKey ? 'block' : 'none'}">
-        Use alternative access code instead
-      </span>
-    </div>
-
-    <!-- REVEALED SECTION -->
-    <div class="revealed-section" id="revealSection">
-      <div class="reveal-banner anim">
-        <div class="reveal-eyebrow">Document Unlocked</div>
-        <div class="reveal-title">Your Portal Credentials</div>
-      </div>
-
-      <div class="creds-body">
-        <div class="cred-row anim-delay">
-          <div class="cred-row-label">Email Address</div>
-          <div class="cred-value" id="revEmail"></div>
-          <button class="copy-btn" onclick="doCopy('revEmail', this)">Copy</button>
-        </div>
-        <div class="cred-row gold anim-delay2">
-          <div class="cred-row-label">Password</div>
-          <div class="cred-value" id="revPass"></div>
-          <button class="copy-btn" onclick="doCopy('revPass', this)" style="border-color:#e8c97a;color:#c9a84c;">Copy</button>
-        </div>
-      </div>
-
-      <a href="${siteUrl}" target="_blank" class="portal-btn anim">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <rect x="3" y="11" width="18" height="11" rx="2"/>
-          <path d="M7 11V7a5 5 0 0110 0v4"/>
-        </svg>
-        Sign In to Client Portal
-      </a>
-
-      <div class="security-note anim">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          <polyline points="9,12 11,14 15,10"/>
-        </svg>
-        <p>Keep these credentials private. Do not share this document. You may delete this file once you have saved your login details.</p>
-      </div>
-    </div>
-
-    <div class="ktech-bar">
-      <span>Secured by <strong>KTech ICT</strong> · HTML King Protect</span>
-      <span>©2026–2027 ASA Law</span>
-    </div>
-  </div>
-
-</div>
-
-<script>
-  const ID_KEY  = '${idKey  || ''}';
-  const PIN_KEY = '${pinKey || ''}';
-  const DATA    = '${payload}';
-  let   mode    = 'id'; // 'id' or 'pin'
-
-  function makeKey(val) {
-    return btoa(unescape(encodeURIComponent(val.replace(/\s/g,'')))).split('').reverse().join('');
-  }
-
-  function tryUnlock() {
-    const val = document.getElementById('pinInput').value.trim();
-    const inp = document.getElementById('pinInput');
-    const err = document.getElementById('errMsg');
-    inp.classList.remove('error-state');
-    err.style.display = 'none';
-
-    if (!val) { inp.classList.add('error-state'); return; }
-
-    const attempt = makeKey(val);
-    const ok = (ID_KEY && attempt === ID_KEY) || (PIN_KEY && attempt === PIN_KEY);
-
-    if (ok) {
-      const creds = JSON.parse(decodeURIComponent(escape(atob(DATA))));
-      document.getElementById('revEmail').textContent = creds.e;
-      document.getElementById('revPass').textContent  = creds.p;
-      document.getElementById('lockSection').style.display    = 'none';
-      document.getElementById('revealSection').style.display  = 'block';
-    } else {
-      inp.classList.add('error-state');
-      err.style.display = 'block';
-    }
-  }
-
-  function useFallback() {
-    mode = 'pin';
-    document.getElementById('fieldLabel').textContent = 'Alternative Access Code';
-    document.getElementById('pinInput').value = '';
-    document.getElementById('pinInput').placeholder = '· · · · · ·';
-    document.getElementById('fallbackLink').style.display = 'none';
-    document.getElementById('errMsg').style.display = 'none';
-    document.getElementById('pinInput').classList.remove('error-state');
-    document.getElementById('pinInput').focus();
-  }
-
-  function doCopy(id, btn) {
-    const txt = document.getElementById(id).textContent;
-    navigator.clipboard.writeText(txt).then(() => {
-      btn.textContent = 'Copied ✓';
-      btn.classList.add('copied');
-      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
-    });
-  }
-
-  document.getElementById('pinInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') tryUnlock();
-  });
-</script>
-</body>
-</html>`;
-
-    const blob = new Blob([html], { type: 'text/html' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    const safeName = (c.name || c.email).replace(/[^a-zA-Z0-9]/g, '_');
-    a.download = 'ASA_Credentials_' + safeName + '.html';
-    a.click();
-    toast('Credential envelope downloaded for ' + (c.name || c.email) + '. Send via email or WhatsApp.');
-  }
-
-  // ── EXPORT / IMPORT BACKUP  // ── EXPORT / IMPORT BACKUP ──────────────────────────────────
+    // ── EXPORT / IMPORT BACKUP  // ── EXPORT / IMPORT BACKUP ──────────────────────────────────
   function exportBackup() {
     const backup = {
       clients: _clients,
